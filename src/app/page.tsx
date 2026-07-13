@@ -436,7 +436,7 @@ export default function Home() {
                                   <Key className="w-3.5 h-3.5" /> Setup Required After Download
                                 </h4>
                                 <p className="text-xs text-amber-200/70 mb-2 leading-relaxed">
-                                  To access private commits, you must add a <code className="bg-black/40 px-1 py-0.5 rounded text-amber-300 font-mono">GH_PAT</code> secret with `repo` scope to your repository's <strong>Actions Secrets</strong>.
+                                  To access private commits, you must add a <code className="bg-black/40 px-1 py-0.5 rounded text-amber-300 font-mono">GH_PAT</code> secret with <code className="bg-black/40 px-1 py-0.5 rounded text-amber-300 font-mono">read:user</code> and <code className="bg-black/40 px-1 py-0.5 rounded text-amber-300 font-mono">repo</code> scopes to your repository's <strong>Actions Secrets</strong>.
                                 </p>
                               </div>
                             )}

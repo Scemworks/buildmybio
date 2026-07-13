@@ -3,15 +3,10 @@ import { saveAs } from 'file-saver';
 import { GitHubData } from './github';
 
 export interface CustomizationData {
-  host: string;
-  city: string;
-  role: string;
-  tools: string;
-  lang: string;
-  editor: string;
   status: string;
   mood: string;
   tagline: string;
+  infoFields: { label: string; value: string }[];
   projects: { name: string; url: string; language: string | null }[];
 }
 
@@ -177,26 +172,50 @@ export function generateNeofetchSVG(data: GitHubData, custom: CustomizationData)
       <rect x="222" y="388" width="22" height="14" rx="2" fill="#ffffff"/>
     </g>
 
-    <!-- INFO PANEL (RIGHT COLUMN) -->
-    <g font-family="'JetBrains Mono', monospace" font-size="14">
-      <text x="440" y="120" class="info-row info-delay-0"><tspan fill="#3fb950" font-weight="bold">${data.name.toLowerCase().replace(/\\s/g, '')}</tspan><tspan fill="#8b949e">@</tspan><tspan fill="#58a6ff" font-weight="bold">${data.username}</tspan></text>
-      <text x="440" y="140" fill="#30363d" class="info-row info-delay-1">---------------------------------</text>
-      <text x="440" y="166" class="info-row info-delay-2"><tspan fill="#58a6ff">OS    </tspan><tspan fill="#8b949e">: </tspan><tspan fill="#e6edf3">GitHub Flavored Linux</tspan></text>
-      <text x="440" y="188" class="info-row info-delay-3"><tspan fill="#58a6ff">Host  </tspan><tspan fill="#8b949e">: </tspan><a href="https://${custom.host}" target="_blank"><tspan fill="#e6edf3">${custom.host}</tspan></a></text>
-      <text x="440" y="210" class="info-row info-delay-4"><tspan fill="#58a6ff">City  </tspan><tspan fill="#8b949e">: </tspan><tspan fill="#e6edf3">${custom.city}</tspan></text>
-      <text x="440" y="232" class="info-row info-delay-5"><tspan fill="#58a6ff">Role  </tspan><tspan fill="#8b949e">: </tspan><tspan fill="#e6edf3">${custom.role}</tspan></text>
-      <text x="440" y="254" class="info-row info-delay-6"><tspan fill="#58a6ff">Tools </tspan><tspan fill="#8b949e">: </tspan><tspan fill="#e6edf3">${custom.tools}</tspan></text>
-      <text x="440" y="276" class="info-row info-delay-7"><tspan fill="#58a6ff">Lang  </tspan><tspan fill="#8b949e">: </tspan><tspan fill="#e6edf3">${custom.lang}</tspan></text>
-      <text x="440" y="298" class="info-row info-delay-8"><tspan fill="#58a6ff">Editor</tspan><tspan fill="#8b949e">: </tspan><tspan fill="#e6edf3">${custom.editor}</tspan></text>
-      <text x="440" y="320" class="info-row info-delay-9" id="stat-repos"><tspan fill="#58a6ff">Repos&#160;</tspan><tspan fill="#8b949e">: </tspan><tspan fill="#f0883e">${data.publicRepos}</tspan><tspan fill="#e6edf3"> public</tspan></text>
-      <text x="440" y="342" class="info-row info-delay-10" id="stat-follow"><tspan fill="#58a6ff">Follow</tspan><tspan fill="#8b949e">: </tspan><tspan fill="#e6edf3">${data.followers} followers, ${data.following} following</tspan></text>
-      <text x="440" y="364" class="info-row info-delay-11" id="stat-stars"><tspan fill="#58a6ff">Stars&#160;</tspan><tspan fill="#8b949e">: </tspan><tspan fill="#f0883e">${data.totalStars}</tspan><tspan fill="#e6edf3"> total</tspan></text>
+      <!-- INFO PANEL (RIGHT COLUMN) -->
+      <g font-family="'JetBrains Mono', monospace" font-size="14">
+        <text x="440" y="120" class="info-row info-delay-0"><tspan fill="#3fb950" font-weight="bold">${data.name.toLowerCase().replace(/\s/g, '')}</tspan><tspan fill="#8b949e">@</tspan><tspan fill="#58a6ff" font-weight="bold">${data.username}</tspan></text>
+        <text x="440" y="140" fill="#30363d" class="info-row info-delay-1">---------------------------------</text>
+        
+        ${(() => {
+          const maxLen = Math.max(...custom.infoFields.map(f => f.label.length), 6);
+          let y = 166;
+          let delay = 2;
+          let out = '';
+          
+          // Dynamic Fields
+          custom.infoFields.forEach((field) => {
+            const paddedLabel = field.label.padEnd(maxLen, ' ');
+            const val = field.label.toLowerCase() === 'host' && !field.value.includes('<a') 
+              ? `<a href="https://${field.value}" target="_blank"><tspan fill="#e6edf3">${field.value}</tspan></a>` 
+              : `<tspan fill="#e6edf3">${field.value}</tspan>`;
+            
+            out += `<text x="440" y="${y}" class="info-row info-delay-${delay}"><tspan fill="#58a6ff">${paddedLabel}</tspan><tspan fill="#8b949e">: </tspan>${val}</text>\n        `;
+            y += 22;
+            delay++;
+          });
+          
+          // Fixed GitHub Stats
+          const statsLabelLen = maxLen;
+          out += `<text x="440" y="${y}" class="info-row info-delay-${delay}" id="stat-repos"><tspan fill="#58a6ff">${'Repos'.padEnd(statsLabelLen, ' ')}</tspan><tspan fill="#8b949e">: </tspan><tspan fill="#f0883e">${data.publicRepos}</tspan><tspan fill="#e6edf3"> public</tspan></text>\n        `;
+          y += 22; delay++;
+          out += `<text x="440" y="${y}" class="info-row info-delay-${delay}" id="stat-follow"><tspan fill="#58a6ff">${'Follow'.padEnd(statsLabelLen, ' ')}</tspan><tspan fill="#8b949e">: </tspan><tspan fill="#e6edf3">${data.followers} followers, ${data.following} following</tspan></text>\n        `;
+          y += 22; delay++;
+          out += `<text x="440" y="${y}" class="info-row info-delay-${delay}" id="stat-stars"><tspan fill="#58a6ff">${'Stars'.padEnd(statsLabelLen, ' ')}</tspan><tspan fill="#8b949e">: </tspan><tspan fill="#f0883e">${data.totalStars}</tspan><tspan fill="#e6edf3"> total</tspan></text>\n        `;
+          y += 32; delay++; // gap for projects
 
-      <!-- Projects -->
-      <text x="440" y="396" class="info-row info-delay-12"><tspan fill="#58a6ff">Projects</tspan><tspan fill="#8b949e">:</tspan></text>
-      ${custom.projects.map((p, i) => `
-      <text x="440" y="${418 + (i * 22)}" class="info-row info-delay-${13 + i}"><tspan fill="#8b949e">&#160;&#160;&gt;&#160;</tspan><a href="${p.url}" target="_blank"><tspan fill="#3fb950">${p.name}</tspan></a><tspan fill="#8b949e">&#160;&#160;[${p.language || 'Code'}]</tspan></text>`).join('')}
-    </g>
+          // Projects
+          out += `<text x="440" y="${y}" class="info-row info-delay-${delay}"><tspan fill="#58a6ff">Projects</tspan><tspan fill="#8b949e">:</tspan></text>\n        `;
+          y += 22; delay++;
+          
+          custom.projects.forEach((p) => {
+            out += `<text x="440" y="${y}" class="info-row info-delay-${delay}"><tspan fill="#8b949e">&#160;&#160;&gt;&#160;</tspan><a href="${p.url}" target="_blank"><tspan fill="#3fb950">${p.name}</tspan></a><tspan fill="#8b949e">&#160;&#160;[${p.language || 'Code'}]</tspan></text>\n        `;
+            y += 22; delay++;
+          });
+          
+          return out;
+        })()}
+      </g>
 
     <!-- FINAL PROMPT + BLINKING CURSOR -->
     <g class="final-prompt">

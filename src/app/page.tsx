@@ -14,15 +14,18 @@ export default function Home() {
   
   const [githubData, setGithubData] = useState<GitHubData | null>(null);
   const [customData, setCustomData] = useState<CustomizationData>({
-    host: '',
-    city: '',
-    role: '',
-    tools: '',
-    lang: '',
-    editor: 'VS Code',
     status: 'online',
     mood: 'building . learning',
     tagline: 'Building cool stuff, one commit at a time',
+    infoFields: [
+      { label: 'OS', value: 'GitHub Flavored Linux' },
+      { label: 'Host', value: '' },
+      { label: 'City', value: '' },
+      { label: 'Role', value: '' },
+      { label: 'Tools', value: '' },
+      { label: 'Lang', value: '' },
+      { label: 'Editor', value: 'VS Code' }
+    ],
     projects: []
   });
 
@@ -38,14 +41,20 @@ export default function Home() {
       setGithubData(data);
       
       // Auto-fill customizations based on fetched data
+      const defaultFields = [
+        { label: 'OS', value: 'GitHub Flavored Linux' },
+        { label: 'Host', value: `${data.username}.github.io` },
+        { label: 'City', value: data.location || 'The Internet' },
+        { label: 'Role', value: data.inferredRole },
+        { label: 'Tools', value: data.topTopics || 'Git, GitHub' },
+        { label: 'Lang', value: data.topLanguages || 'HTML, CSS' },
+        { label: 'Editor', value: 'VS Code' }
+      ];
+
       setCustomData(prev => ({
         ...prev,
-        city: data.location || 'The Internet',
-        host: `${data.username}.github.io`,
+        infoFields: defaultFields,
         projects: data.topProjects.map(p => ({ ...p })),
-        lang: data.topLanguages || 'HTML, CSS',
-        tools: data.topTopics || 'Git, GitHub',
-        role: data.inferredRole,
         mood: data.inferredMood
       }));
     } catch (err: any) {
@@ -58,6 +67,16 @@ export default function Home() {
   const handleCustomChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setCustomData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleInfoFieldChange = (index: number, key: 'label' | 'value', val: string) => {
+    setCustomData(prev => {
+      const newFields = [...prev.infoFields];
+      if (newFields[index]) {
+        newFields[index] = { ...newFields[index], [key]: val };
+      }
+      return { ...prev, infoFields: newFields };
+    });
   };
 
   const handleProjectChange = (index: number, field: string, value: string) => {
@@ -163,18 +182,57 @@ export default function Home() {
                 <h2 className="text-xl font-semibold text-white mb-6">Customize Details</h2>
                 
                 <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Field label="Host (URL)" name="host" value={customData.host} onChange={handleCustomChange} />
-                    <Field label="Location" name="city" value={customData.city} onChange={handleCustomChange} />
-                    <Field label="Role" name="role" value={customData.role} onChange={handleCustomChange} />
-                    <Field label="Tools" name="tools" value={customData.tools} onChange={handleCustomChange} />
-                    <Field label="Languages" name="lang" value={customData.lang} onChange={handleCustomChange} />
-                    <Field label="Editor" name="editor" value={customData.editor} onChange={handleCustomChange} />
-                    <Field label="Status" name="status" value={customData.status} onChange={handleCustomChange} />
+                  <div className="pt-4">
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-lg font-medium text-white">Categories</h3>
+                      <button 
+                        type="button" 
+                        onClick={() => setCustomData(p => ({ ...p, infoFields: [...p.infoFields, { label: 'New', value: 'Value' }] }))}
+                        className="text-xs bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded transition-colors text-white"
+                      >
+                        + Add Category
+                      </button>
+                    </div>
+                    <div className="space-y-3">
+                      {customData.infoFields.map((field, idx) => (
+                        <div key={idx} className="flex gap-2 items-center">
+                          <input
+                            className="bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:ring-1 focus:ring-blue-500 w-1/3"
+                            placeholder="Category"
+                            value={field.label}
+                            onChange={e => handleInfoFieldChange(idx, 'label', e.target.value)}
+                          />
+                          <input
+                            className="bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:ring-1 focus:ring-blue-500 flex-1"
+                            placeholder="Content"
+                            value={field.value}
+                            onChange={e => handleInfoFieldChange(idx, 'value', e.target.value)}
+                          />
+                          <button 
+                            type="button" 
+                            onClick={() => {
+                              const newFields = customData.infoFields.filter((_, i) => i !== idx);
+                              setCustomData(p => ({ ...p, infoFields: newFields }));
+                            }}
+                            className="text-red-400 hover:bg-red-400/20 px-2 py-1.5 rounded-lg transition-colors font-bold"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  
-                  <Field label="Mood / Bio" name="mood" value={customData.mood} onChange={handleCustomChange} />
-                  <Field label="Tagline (Below ASCII Name)" name="tagline" value={customData.tagline} onChange={handleCustomChange} />
+
+                  <div className="pt-4 border-t border-white/5">
+                    <h3 className="text-lg font-medium text-white mb-4">Other Details</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <Field label="Status" name="status" value={customData.status} onChange={handleCustomChange} />
+                      <Field label="Mood / Bio" name="mood" value={customData.mood} onChange={handleCustomChange} />
+                    </div>
+                    <div className="mt-4">
+                      <Field label="Tagline (Below ASCII Name)" name="tagline" value={customData.tagline} onChange={handleCustomChange} />
+                    </div>
+                  </div>
 
                   <div className="pt-4 border-t border-white/5">
                     <h3 className="text-lg font-medium text-white mb-4">Top Projects</h3>

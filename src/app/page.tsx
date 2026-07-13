@@ -153,7 +153,7 @@ export default function Home() {
                 </div>
                 <NeofetchPreview svgString={generateNeofetchSVG(githubData, customData)} />
                 <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 text-sm text-blue-200/80">
-                  <strong>What's next?</strong> Extract the ZIP and push the files to a repository named <code>{githubData.username}/{githubData.username}</code>. GitHub Actions will automatically update your stats every day!
+                  <strong>What's next?</strong> Extract the ZIP and push the files to a repository named <code>{githubData.username}</code>. GitHub Actions will automatically update your stats every day!
                 </div>
               </div>
 

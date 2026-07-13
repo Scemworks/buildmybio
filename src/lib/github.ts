@@ -106,8 +106,16 @@ export async function fetchGitHubData(username: string): Promise<GitHubData> {
       inferredMood = 'shipping code 🚢';
     } else if (daysSinceLastUpdate > 30) {
       inferredMood = 'taking a break 🏖️';
+    } else if (totalStars > 100) {
+      inferredMood = 'maintaining open source 🔧';
+    } else if (user.followers > 50) {
+      inferredMood = 'building community 🤝';
+    } else if (mainLang === 'python' || mainLang === 'jupyter notebook') {
+      inferredMood = 'crunching data 📊';
+    } else if (mainLang === 'javascript' || mainLang === 'typescript') {
+      inferredMood = 'brewing javascript ☕';
     } else {
-      inferredMood = 'building . learning . shipping';
+      inferredMood = 'planning the next project 💭';
     }
   }
 

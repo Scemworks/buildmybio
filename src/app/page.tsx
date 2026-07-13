@@ -14,14 +14,14 @@ export default function Home() {
   
   const [githubData, setGithubData] = useState<GitHubData | null>(null);
   const [customData, setCustomData] = useState<CustomizationData>({
-    host: 'pmshadin.dev',
-    city: 'Earth',
-    role: 'Developer',
-    tools: 'React, Next.js',
-    lang: 'JS, TS',
+    host: '',
+    city: '',
+    role: '',
+    tools: '',
+    lang: '',
     editor: 'VS Code',
     status: 'online',
-    mood: 'building . learning . shipping',
+    mood: 'building . learning',
     projects: []
   });
 
@@ -39,9 +39,13 @@ export default function Home() {
       // Auto-fill customizations based on fetched data
       setCustomData(prev => ({
         ...prev,
-        city: data.location || prev.city,
-        host: `${data.username}.github.io`, // Reasonable default
-        projects: data.topProjects.map(p => ({ ...p }))
+        city: data.location || 'The Internet',
+        host: `${data.username}.github.io`,
+        projects: data.topProjects.map(p => ({ ...p })),
+        lang: data.topLanguages || 'HTML, CSS',
+        tools: data.topTopics || 'Git, GitHub',
+        role: data.bio ? data.bio.split(',')[0].split('\\n')[0].slice(0, 30) : 'Developer',
+        mood: data.bio && data.bio.length > 30 ? data.bio.slice(0, 40) + '...' : 'building . learning'
       }));
     } catch (err: any) {
       setError(err.message || 'Failed to fetch user');

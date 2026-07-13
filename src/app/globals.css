@@ -1,26 +1,41 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--bg-base);
+  --color-foreground: var(--fg-base);
+  
+  /* Custom Palette: Midnight Aurora */
+  --color-brand-cyan: #00F0FF;
+  --color-brand-purple: #B026FF;
+  --color-brand-emerald: #10b981;
+  --color-surface-100: #0a0d17;
+  --color-surface-200: #101423;
+  --color-surface-300: #181d33;
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --bg-base: #06080F;
+  --fg-base: #E2E8F0;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-base);
+  color: var(--fg-base);
+  font-family: var(--font-sans), sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Unique Selection Styling - Preserves Text Color */
+::selection {
+  background: rgba(0, 240, 255, 0.25);
+  color: inherit;
+  text-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+}
+::-moz-selection {
+  background: rgba(0, 240, 255, 0.25);
+  color: inherit;
+  text-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
 }

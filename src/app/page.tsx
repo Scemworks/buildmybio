@@ -162,7 +162,7 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-neutral-200 selection:bg-blue-500/30 font-sans selection:text-blue-200 pb-32 overflow-hidden">
+    <main className="min-h-screen bg-background text-foreground font-sans pb-32 overflow-hidden">
       {/* Sophisticated ambient background glow */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-900/20 blur-[120px]" />

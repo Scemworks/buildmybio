@@ -139,8 +139,8 @@ export function generateNeofetchSVG(data: GitHubData, custom: CustomizationData)
     <!-- ASCII ART BLOCK (LEFT COLUMN) -->
     <g class="ascii-block" font-size="8" fill="#3fb950" filter="url(#glow)" font-family="'JetBrains Mono', monospace">
       ${data.asciiArt 
-        ? data.asciiArt.replace(/\\r/g, '').split('\\n').map((line, i) => \`<text x="25" y="\${110 + i * 9}">\${line.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/ /g, '&#160;')}</text>\`).join('\\n      ')
-        : \`<text x="25" y="110">\${data.username}</text>\`
+        ? data.asciiArt.replace(/\r/g, '').split('\n').map((line, i) => `<text x="25" y="${110 + i * 9}">${line.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/ /g, '&#160;')}</text>`).join('\n      ')
+        : `<text x="25" y="110">${data.username}</text>`
       }
       
       <text x="40" y="210" font-size="12" fill="#238636">==================================================</text>

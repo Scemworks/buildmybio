@@ -10,6 +10,7 @@ export interface GitHubData {
   topProjects: { name: string; url: string; language: string | null }[];
   topLanguages: string;
   topTopics: string;
+  asciiArt: string;
 }
 
 export async function fetchGitHubData(username: string): Promise<GitHubData> {
@@ -50,6 +51,17 @@ export async function fetchGitHubData(username: string): Promise<GitHubData> {
     topTopics = topTopicsArr.join(', ');
   }
 
+  // Fetch ASCII art
+  let asciiArt = '';
+  try {
+    const asciiRes = await fetch(`/api/ascii?text=${encodeURIComponent(username)}`);
+    if (asciiRes.ok) {
+      asciiArt = await asciiRes.text();
+    }
+  } catch (e) {
+    console.error('Failed to fetch ascii art', e);
+  }
+
   return {
     username: user.login,
     name: user.name || user.login,
@@ -61,6 +73,7 @@ export async function fetchGitHubData(username: string): Promise<GitHubData> {
     totalStars,
     topLanguages,
     topTopics,
+    asciiArt,
     topProjects: topProjects.map(p => ({
       name: p.name,
       url: p.html_url,

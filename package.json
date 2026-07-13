@@ -9,7 +9,9 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@types/figlet": "^1.7.0",
     "@types/file-saver": "^2.0.7",
+    "figlet": "^1.11.1",
     "file-saver": "^2.0.5",
     "framer-motion": "^12.42.2",
     "jszip": "^3.10.1",

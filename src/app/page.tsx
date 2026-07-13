@@ -435,9 +435,31 @@ export default function Home() {
                                 <h4 className="text-amber-400 font-bold text-xs flex items-center gap-2 mb-2 tracking-wide uppercase">
                                   <Key className="w-3.5 h-3.5" /> Setup Required After Download
                                 </h4>
-                                <p className="text-xs text-amber-200/70 mb-2 leading-relaxed">
+                                <p className="text-xs text-amber-200/70 mb-3 leading-relaxed">
                                   To access private commits, you must add a <code className="bg-black/40 px-1 py-0.5 rounded text-amber-300 font-mono">GH_PAT</code> secret with <code className="bg-black/40 px-1 py-0.5 rounded text-amber-300 font-mono">read:user</code> and <code className="bg-black/40 px-1 py-0.5 rounded text-amber-300 font-mono">repo</code> scopes to your repository's <strong>Actions Secrets</strong>.
                                 </p>
+                                <ol className="text-xs text-amber-100/70 space-y-2 list-none">
+                                  <li className="flex gap-2">
+                                    <span className="bg-amber-500/20 text-amber-400 font-bold w-4 h-4 rounded flex items-center justify-center flex-shrink-0 text-[9px]">1</span>
+                                    <span>Go to <a href="https://github.com/settings/tokens?type=beta" target="_blank" rel="noopener noreferrer" className="text-amber-400 underline hover:text-amber-300">github.com/settings/tokens</a> → Generate new token (Classic)</span>
+                                  </li>
+                                  <li className="flex gap-2">
+                                    <span className="bg-amber-500/20 text-amber-400 font-bold w-4 h-4 rounded flex items-center justify-center flex-shrink-0 text-[9px]">2</span>
+                                    <span>Name it, set expiration, and check <code className="bg-black/40 px-1 rounded text-amber-300">read:user</code> and <code className="bg-black/40 px-1 rounded text-amber-300">repo</code> scopes</span>
+                                  </li>
+                                  <li className="flex gap-2">
+                                    <span className="bg-amber-500/20 text-amber-400 font-bold w-4 h-4 rounded flex items-center justify-center flex-shrink-0 text-[9px]">3</span>
+                                    <span>Generate and copy the token</span>
+                                  </li>
+                                  <li className="flex gap-2">
+                                    <span className="bg-amber-500/20 text-amber-400 font-bold w-4 h-4 rounded flex items-center justify-center flex-shrink-0 text-[9px]">4</span>
+                                    <span>In your profile repo, go to <strong>Settings</strong> → <strong>Secrets and variables</strong> → <strong>Actions</strong></span>
+                                  </li>
+                                  <li className="flex gap-2">
+                                    <span className="bg-amber-500/20 text-amber-400 font-bold w-4 h-4 rounded flex items-center justify-center flex-shrink-0 text-[9px]">5</span>
+                                    <span>Add a <strong>New repository secret</strong> named <code className="bg-black/40 px-1 rounded text-amber-300">GH_PAT</code> and paste the token</span>
+                                  </li>
+                                </ol>
                               </div>
                             )}
                           </div>

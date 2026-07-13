@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal, Download, Loader2, Sparkles, Key } from 'lucide-react';
+import { Terminal, Download, Loader2, Sparkles, Key, Eye } from 'lucide-react';
 import { fetchGitHubData, GitHubData, fetchAdvancedGitHubData, AdvancedGitHubData } from '@/lib/github';
 import { generateNeofetchSVG, CustomizationData, downloadFilesZip } from '@/lib/generateFiles';
 import { generateAdvancedStatsSVG } from '@/lib/AdvancedStats';
@@ -31,8 +31,11 @@ export default function Home() {
       { label: 'Editor', value: 'VS Code' }
     ],
     projects: [],
-    includeAdvancedStats: false
+    includeAdvancedStats: false,
+    includePrivateCommits: false
   });
+
+  const [hasGeneratedPreview, setHasGeneratedPreview] = useState(false);
 
   const handleFetchAdvanced = async () => {
     if (!githubData) return;
@@ -68,6 +71,7 @@ export default function Home() {
     setError('');
     setAdvancedData(null);
     setAdvancedError('');
+    setHasGeneratedPreview(false); // Reset preview on new fetch
     
     try {
       const cacheKey = `githubData_${usernameInput.toLowerCase()}`;
@@ -107,6 +111,25 @@ export default function Home() {
     }
   };
 
+  const handleGeneratePreview = async () => {
+    if (!githubData) return;
+    setHasGeneratedPreview(true);
+    if (customData.includeAdvancedStats && !advancedData && !isFetchingAdvanced) {
+      await handleFetchAdvanced();
+    }
+    // Scroll to preview smoothly
+    setTimeout(() => {
+      document.getElementById('preview-pane')?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  };
+
+  useEffect(() => {
+    // If preview is active and they toggle advanced stats, fetch it automatically
+    if (hasGeneratedPreview && customData.includeAdvancedStats && !advancedData && !isFetchingAdvanced) {
+      handleFetchAdvanced();
+    }
+  }, [hasGeneratedPreview, customData.includeAdvancedStats, advancedData, isFetchingAdvanced]);
+
   const handleCustomChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setCustomData(prev => ({ ...prev, [name]: value }));
@@ -139,42 +162,51 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-neutral-950 text-neutral-200 selection:bg-blue-500/30 font-sans selection:text-blue-200">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/20 via-neutral-950 to-neutral-950 pointer-events-none" />
+    <main className="min-h-screen bg-[#0a0a0a] text-neutral-200 selection:bg-blue-500/30 font-sans selection:text-blue-200 pb-32 overflow-hidden">
+      {/* Sophisticated ambient background glow */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-900/20 blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-emerald-900/10 blur-[120px]" />
+      </div>
       
-      <div className="relative z-10 max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
         
         {/* Header Section */}
         <motion.div 
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="text-center mb-16"
         >
-          <div className="inline-flex items-center justify-center p-3 bg-blue-500/10 rounded-full mb-4 ring-1 ring-blue-500/20">
-            <Terminal className="w-8 h-8 text-blue-400" />
-          </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-4">
-            Neofetch <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">Profile Generator</span>
+          <motion.div 
+            whileHover={{ scale: 1.05, rotate: 5 }}
+            transition={{ type: "spring", stiffness: 300, damping: 10 }}
+            className="inline-flex items-center justify-center p-3.5 bg-white/[0.03] backdrop-blur-md rounded-2xl mb-6 ring-1 ring-white/10 shadow-xl"
+          >
+            <Terminal className="w-7 h-7 text-neutral-300" />
+          </motion.div>
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tighter text-white mb-6">
+            Neofetch <span className="text-transparent bg-clip-text bg-gradient-to-r from-neutral-400 to-white">Bio</span>
           </h1>
-          <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
-            Generate an animated, self-updating terminal-style SVG for your GitHub profile README.
+          <p className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto font-light leading-relaxed">
+            Generate an animated, self-updating terminal SVG for your GitHub Profile.
           </p>
         </motion.div>
 
-        {/* Input Form */}
+        {/* Search Bar */}
         <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.1 }}
-          className="max-w-md mx-auto mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          className="max-w-2xl mx-auto mb-20"
         >
           <form onSubmit={handleFetch} className="relative group">
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-            <div className="relative flex items-center bg-neutral-900 rounded-xl ring-1 ring-white/10 p-1">
+            <div className="absolute -inset-1 bg-gradient-to-r from-white/10 to-white/5 rounded-3xl blur-md opacity-0 group-hover:opacity-100 transition duration-700"></div>
+            <div className="relative flex items-center bg-[#111] border border-white/10 rounded-2xl p-1.5 shadow-2xl transition-all duration-300 focus-within:border-white/20 focus-within:shadow-[0_0_40px_rgba(255,255,255,0.05)]">
               <input
                 type="text"
-                placeholder="Enter GitHub Username"
-                className="w-full bg-transparent border-none text-white placeholder-neutral-500 px-4 py-3 focus:outline-none focus:ring-0"
+                placeholder="Enter your GitHub Username"
+                className="w-full bg-transparent border-none text-white placeholder-neutral-600 px-5 py-4 focus:outline-none focus:ring-0 text-lg font-light"
                 value={usernameInput}
                 onChange={e => setUsernameInput(e.target.value)}
                 required
@@ -182,269 +214,358 @@ export default function Home() {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex items-center justify-center bg-white/10 hover:bg-white/20 text-white px-6 py-2.5 rounded-lg transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center justify-center bg-white text-black hover:bg-neutral-200 px-8 py-4 rounded-xl transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed group-hover:shadow-lg active:scale-95"
               >
-                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
-                <span className="ml-2">{loading ? 'Fetching...' : 'Generate'}</span>
+                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5 opacity-70" />}
+                <span className="ml-2.5">{loading ? 'Loading' : 'Initialize'}</span>
               </button>
             </div>
           </form>
-          {error && <p className="text-red-400 text-sm mt-3 text-center">{error}</p>}
+          {error && (
+            <motion.p initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="text-red-400 text-sm mt-4 text-center font-medium bg-red-400/10 py-3 rounded-xl border border-red-400/20">
+              {error}
+            </motion.p>
+          )}
         </motion.div>
 
-        {/* Main Content Area */}
+        {/* Bento Grid Configuration Area */}
         <AnimatePresence>
           {githubData && (
             <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start"
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: { staggerChildren: 0.1 }
+                }
+              }}
+              className="mb-20"
             >
+              <motion.h2 
+                variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+                className="text-2xl font-semibold text-white mb-8 flex items-center gap-3 tracking-tight"
+              >
+                <span className="bg-white/10 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium border border-white/5 shadow-sm">1</span> 
+                Configure Profile
+              </motion.h2>
               
-              {/* Preview Column */}
-              <div className="flex flex-col gap-6 lg:sticky lg:top-8">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-emerald-400" /> README Preview
-                  </h2>
-                  <button
-                    onClick={handleDownload}
-                    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-lg shadow-blue-500/20"
-                  >
-                    <Download className="w-4 h-4" /> Download ZIP
-                  </button>
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
                 
-                <div className="bg-[#0d1117] rounded-xl border border-white/10 overflow-hidden shadow-2xl">
-                  <div className="bg-black/40 px-4 py-3 border-b border-white/5 flex items-center gap-2">
-                    <svg className="w-4 h-4 text-neutral-400" viewBox="0 0 16 16" fill="currentColor"><path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"></path></svg>
-                    <span className="text-sm font-semibold text-neutral-200">README.md</span>
+                {/* Identity Card */}
+                <motion.div 
+                  variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                  className="md:col-span-5 bg-[#111] border border-white/5 hover:border-white/10 rounded-[2rem] p-8 shadow-xl flex flex-col transition-colors group"
+                >
+                  <h3 className="text-lg font-medium text-white mb-6 flex items-center gap-3">
+                    <div className="w-2 h-2 rounded-full bg-neutral-400 group-hover:bg-emerald-400 transition-colors" />
+                    Identity
+                  </h3>
+                  <div className="space-y-4 flex-1">
+                    <Field label="Status" name="status" value={customData.status} onChange={handleCustomChange} />
+                    <Field label="Mood / Bio" name="mood" value={customData.mood} onChange={handleCustomChange} />
+                    <Field label="Tagline (Below ASCII Name)" name="tagline" value={customData.tagline} onChange={handleCustomChange} />
                   </div>
-                  <div className="p-6 md:p-8 flex flex-col items-center gap-6">
-                    <NeofetchPreview svgString={generateNeofetchSVG(githubData, customData)} />
-                    
-                    {customData.includeAdvancedStats && (
-                      <>
-                        {!advancedData ? (
-                          <div className="w-full max-w-[800px] aspect-[800/530] border border-dashed border-white/20 rounded-2xl p-8 flex flex-col items-center justify-center text-center bg-white/5">
-                            <Sparkles className="w-8 h-8 text-blue-400/60 mb-3" />
-                            <h4 className="text-white font-medium mb-2">Advanced Stats Pending</h4>
-                            <p className="text-sm text-blue-200/60 mb-4 max-w-sm">
-                              Click below to fetch your public advanced stats and complete the README preview.
-                            </p>
-                            <button
-                              onClick={handleFetchAdvanced}
-                              disabled={isFetchingAdvanced}
-                              className="bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors flex items-center"
-                            >
-                              {isFetchingAdvanced ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                              {isFetchingAdvanced ? 'Fetching...' : 'Generate Advanced Preview'}
-                            </button>
-                            {advancedError && <p className="text-red-400 text-sm mt-3">{advancedError}</p>}
-                          </div>
-                        ) : (
-                          <NeofetchPreview svgString={generateAdvancedStatsSVG(githubData.username, githubData.name, advancedData, customData)} />
-                        )}
-                      </>
+                </motion.div>
+
+                {/* Categories Card */}
+                <motion.div 
+                  variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                  className="md:col-span-7 bg-[#111] border border-white/5 hover:border-white/10 rounded-[2rem] p-8 shadow-xl flex flex-col transition-colors group"
+                >
+                  <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-lg font-medium text-white flex items-center gap-3">
+                      <div className="w-2 h-2 rounded-full bg-neutral-400 group-hover:bg-blue-400 transition-colors" />
+                      Categories
+                    </h3>
+                    <button 
+                      type="button" 
+                      onClick={() => setCustomData(p => ({ ...p, infoFields: [...p.infoFields, { label: 'New', value: 'Value' }] }))}
+                      className="text-xs bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg transition-colors text-white font-medium shadow-sm"
+                    >
+                      + Add Item
+                    </button>
+                  </div>
+                  <div className="space-y-3 overflow-y-auto pr-2 max-h-[280px] custom-scrollbar">
+                    {customData.infoFields.map((field, idx) => (
+                      <div key={idx} className="flex gap-2 items-center bg-black/20 p-2 rounded-xl border border-white/5">
+                        <input
+                          className="bg-transparent px-3 py-1.5 text-sm text-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500/50 rounded-lg w-1/3 font-medium placeholder-blue-200/30"
+                          placeholder="Category"
+                          value={field.label}
+                          onChange={e => handleInfoFieldChange(idx, 'label', e.target.value)}
+                        />
+                        <span className="text-white/20">:</span>
+                        <input
+                          className="bg-transparent px-3 py-1.5 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-500/50 rounded-lg flex-1 placeholder-white/30"
+                          placeholder="Content"
+                          value={field.value}
+                          onChange={e => handleInfoFieldChange(idx, 'value', e.target.value)}
+                        />
+                        <button 
+                          type="button" 
+                          onClick={() => {
+                            const newFields = customData.infoFields.filter((_, i) => i !== idx);
+                            setCustomData(p => ({ ...p, infoFields: newFields }));
+                          }}
+                          className="text-red-400/70 hover:text-red-400 hover:bg-red-400/10 w-8 h-8 flex items-center justify-center rounded-lg transition-colors font-bold"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+
+                {/* Top Projects Card */}
+                <motion.div 
+                  variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                  className="md:col-span-6 bg-[#111] border border-white/5 hover:border-white/10 rounded-[2rem] p-8 shadow-xl flex flex-col transition-colors group"
+                >
+                  <h3 className="text-lg font-medium text-white mb-6 flex items-center gap-3">
+                    <div className="w-2 h-2 rounded-full bg-neutral-400 group-hover:bg-purple-400 transition-colors" />
+                    Top Projects
+                  </h3>
+                  <div className="space-y-4">
+                    {customData.projects.map((proj, idx) => (
+                      <div key={idx} className="bg-white/[0.02] p-5 rounded-2xl border border-white/5 grid grid-cols-1 gap-3 relative overflow-hidden group/item hover:bg-white/[0.04] transition-colors">
+                        <div className="absolute top-0 left-0 w-1 h-full bg-neutral-800 group-hover/item:bg-purple-500/50 transition-colors" />
+                        <div className="grid grid-cols-2 gap-4 pl-3">
+                          <input
+                            className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/30 focus:outline-none focus:border-purple-500/50 transition-colors"
+                            placeholder="Name"
+                            value={proj.name}
+                            onChange={e => handleProjectChange(idx, 'name', e.target.value)}
+                          />
+                          <input
+                            className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/30 focus:outline-none focus:border-purple-500/50 transition-colors"
+                            placeholder="Language (e.g. JS)"
+                            value={proj.language || ''}
+                            onChange={e => handleProjectChange(idx, 'language', e.target.value)}
+                          />
+                        </div>
+                        <input
+                          className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/30 focus:outline-none focus:border-purple-500/50 w-full ml-2 transition-colors"
+                          style={{ width: 'calc(100% - 0.5rem)' }}
+                          placeholder="URL"
+                          value={proj.url}
+                          onChange={e => handleProjectChange(idx, 'url', e.target.value)}
+                        />
+                      </div>
+                    ))}
+                    {customData.projects.length === 0 && (
+                      <div className="h-full flex items-center justify-center p-8 bg-black/10 rounded-xl border border-dashed border-white/10">
+                        <p className="text-sm text-neutral-500 font-medium">No public projects found.</p>
+                      </div>
                     )}
                   </div>
-                </div>
+                </motion.div>
 
-                <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 text-sm text-blue-200/80 mt-2">
-                  <strong>What's next?</strong> Extract the ZIP and push the files to a repository named <code>{githubData.username}</code>. GitHub Actions will automatically update your stats every day!
-                </div>
-              </div>
-
-              {/* Customization Column */}
-              <div className="bg-neutral-900/50 backdrop-blur-md border border-white/5 rounded-2xl p-6 lg:p-8">
-                <h2 className="text-xl font-semibold text-white mb-6">Customize Details</h2>
-                
-                <div className="space-y-6">
-                  <div className="pt-4">
-                    <div className="flex justify-between items-center mb-4">
-                      <h3 className="text-lg font-medium text-white">Categories</h3>
-                      <button 
-                        type="button" 
-                        onClick={() => setCustomData(p => ({ ...p, infoFields: [...p.infoFields, { label: 'New', value: 'Value' }] }))}
-                        className="text-xs bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded transition-colors text-white"
-                      >
-                        + Add Category
-                      </button>
-                    </div>
-                    <div className="space-y-3">
-                      {customData.infoFields.map((field, idx) => (
-                        <div key={idx} className="flex gap-2 items-center">
-                          <input
-                            className="bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:ring-1 focus:ring-blue-500 w-1/3"
-                            placeholder="Category"
-                            value={field.label}
-                            onChange={e => handleInfoFieldChange(idx, 'label', e.target.value)}
-                          />
-                          <input
-                            className="bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:ring-1 focus:ring-blue-500 flex-1"
-                            placeholder="Content"
-                            value={field.value}
-                            onChange={e => handleInfoFieldChange(idx, 'value', e.target.value)}
-                          />
-                          <button 
-                            type="button" 
-                            onClick={() => {
-                              const newFields = customData.infoFields.filter((_, i) => i !== idx);
-                              setCustomData(p => ({ ...p, infoFields: newFields }));
-                            }}
-                            className="text-red-400 hover:bg-red-400/20 px-2 py-1.5 rounded-lg transition-colors font-bold"
-                          >
-                            ×
-                          </button>
-                        </div>
-                      ))}
-                    </div>
+                {/* Advanced Stats Card */}
+                <motion.div 
+                  variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                  className="md:col-span-6 bg-gradient-to-br from-neutral-900 to-[#0a0a0a] border border-white/5 hover:border-white/10 rounded-[2rem] p-8 shadow-xl flex flex-col transition-colors relative overflow-hidden group"
+                >
+                  <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity pointer-events-none">
+                    <Sparkles className="w-32 h-32 text-white" />
                   </div>
-
-                  <div className="pt-4 border-t border-white/5">
-                    <h3 className="text-lg font-medium text-white mb-4">Other Details</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <Field label="Status" name="status" value={customData.status} onChange={handleCustomChange} />
-                      <Field label="Mood / Bio" name="mood" value={customData.mood} onChange={handleCustomChange} />
-                    </div>
-                    <div className="mt-4">
-                      <Field label="Tagline (Below ASCII Name)" name="tagline" value={customData.tagline} onChange={handleCustomChange} />
-                    </div>
-                    
-                    <div className="mt-6 bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
-                      <label className="flex items-start gap-3 cursor-pointer">
+                  
+                  <h3 className="text-lg font-medium text-white mb-6 flex items-center gap-3 relative z-10">
+                    <div className="w-2 h-2 rounded-full bg-neutral-400 group-hover:bg-amber-400 transition-colors" />
+                    Advanced Integrations
+                  </h3>
+                  
+                  <div className="relative z-10 flex-1 flex flex-col justify-center gap-4">
+                    <label className="flex items-start gap-4 cursor-pointer p-5 bg-white/[0.02] rounded-2xl border border-white/5 hover:bg-white/[0.04] transition-colors">
+                      <div className="relative flex items-center justify-center pt-0.5">
                         <input
                           type="checkbox"
-                          className="mt-1 bg-black/20 border border-white/10 rounded focus:ring-blue-500"
+                          className="peer sr-only"
                           checked={customData.includeAdvancedStats || false}
                           onChange={e => setCustomData(p => ({ ...p, includeAdvancedStats: e.target.checked }))}
                         />
-                        <div>
-                          <span className="text-white font-medium block">Generate Advanced Stats (like Scemworks profile)</span>
-                          <span className="text-sm text-blue-200/80 block mt-1">
-                            Generates a secondary SVG with detailed languages, lifetime commits, and streaks. 
-                            <strong> Requires adding a GitHub Secret named <code>GH_PAT</code></strong> with <code>repo</code> access in your repository.
-                          </span>
+                        <div className="w-5 h-5 bg-black border border-white/20 rounded peer-checked:bg-white peer-checked:border-white transition-colors flex items-center justify-center">
+                          <svg className={`w-3.5 h-3.5 text-black pointer-events-none transition-transform ${customData.includeAdvancedStats ? 'scale-100' : 'scale-0'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                         </div>
-                      </label>
-                      
+                      </div>
+                      <div>
+                        <span className="text-white font-medium block text-base mb-1.5">Generate Advanced Stats SVG</span>
+                        <span className="text-sm text-neutral-500 block leading-relaxed font-light">
+                          Adds an animated stats card displaying lifetime commits, PRs, and top languages.
+                        </span>
+                      </div>
+                    </label>
+                    
+                    <AnimatePresence>
                       {customData.includeAdvancedStats && (
-                        <div className="mt-4 ml-7 border-l-2 border-blue-500/30 pl-4">
-                          <label className="flex items-start gap-3 cursor-pointer">
-                            <input
-                              type="checkbox"
-                              className="mt-1 bg-black/20 border border-white/10 rounded focus:ring-blue-500"
-                              checked={customData.includePrivateCommits || false}
-                              onChange={e => setCustomData(p => ({ ...p, includePrivateCommits: e.target.checked }))}
-                            />
-                            <div>
-                              <span className="text-white font-medium block text-sm">Include Private Commits</span>
-                              <span className="text-xs text-blue-200/70 block mt-0.5">
-                                Your private contributions will be added to the total lifetime commits count.
-                              </span>
-                            </div>
-                          </label>
+                        <motion.div 
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="overflow-hidden"
+                        >
+                          <div className="pt-4 pl-4">
+                            <label className="flex items-start gap-3 cursor-pointer p-3 bg-black/20 rounded-xl border border-white/5 hover:bg-black/30 transition-colors">
+                              <div className="relative flex items-center justify-center pt-0.5">
+                                <input
+                                  type="checkbox"
+                                  className="peer sr-only"
+                                  checked={customData.includePrivateCommits || false}
+                                  onChange={e => setCustomData(p => ({ ...p, includePrivateCommits: e.target.checked }))}
+                                />
+                                <div className="w-5 h-5 bg-neutral-800 border-2 border-neutral-600 rounded flex items-center justify-center peer-checked:bg-amber-500 peer-checked:border-amber-500 transition-colors">
+                                  <svg className={`w-3 h-3 text-white pointer-events-none transition-transform ${customData.includePrivateCommits ? 'scale-100' : 'scale-0'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                                </div>
+                              </div>
+                              <div>
+                                <span className="text-white font-medium block text-sm">Include Private Commits</span>
+                                <span className="text-xs text-blue-200/60 block mt-0.5">
+                                  Your private contributions will be added to the total lifetime commits count.
+                                </span>
+                              </div>
+                            </label>
 
-                          {customData.includePrivateCommits && (
-                            <div className="mt-4 bg-amber-500/5 border border-amber-500/20 rounded-xl p-4">
-                              <h4 className="text-amber-300 font-semibold text-sm flex items-center gap-2 mb-3">
-                                <Key className="w-4 h-4" /> Setup Required: Add <code className="bg-black/30 px-1.5 py-0.5 rounded text-xs">GH_PAT</code> Secret
-                              </h4>
-                              <p className="text-xs text-blue-200/60 mb-3">
-                                Private commit data can only be accessed via GitHub Actions using a Personal Access Token. Follow these steps after downloading:
-                              </p>
-                              <ol className="text-xs text-blue-200/80 space-y-2.5 list-none">
-                                <li className="flex gap-2">
-                                  <span className="bg-blue-500/20 text-blue-300 font-bold w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 text-[10px]">1</span>
-                                  <span>Go to <a href="https://github.com/settings/tokens?type=beta" target="_blank" rel="noopener noreferrer" className="text-blue-400 underline hover:text-blue-300">github.com/settings/tokens</a> → <strong>Generate new token (Classic)</strong></span>
-                                </li>
-                                <li className="flex gap-2">
-                                  <span className="bg-blue-500/20 text-blue-300 font-bold w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 text-[10px]">2</span>
-                                  <span>Name it anything (e.g. <code className="bg-black/30 px-1 rounded">readme-stats</code>), set expiration, and check the <code className="bg-black/30 px-1 rounded">repo</code> scope</span>
-                                </li>
-                                <li className="flex gap-2">
-                                  <span className="bg-blue-500/20 text-blue-300 font-bold w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 text-[10px]">3</span>
-                                  <span>Click <strong>Generate token</strong> and copy it</span>
-                                </li>
-                                <li className="flex gap-2">
-                                  <span className="bg-blue-500/20 text-blue-300 font-bold w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 text-[10px]">4</span>
-                                  <span>Go to your profile repo → <strong>Settings</strong> → <strong>Secrets and variables</strong> → <strong>Actions</strong></span>
-                                </li>
-                                <li className="flex gap-2">
-                                  <span className="bg-blue-500/20 text-blue-300 font-bold w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 text-[10px]">5</span>
-                                  <span>Click <strong>New repository secret</strong>, name it <code className="bg-black/30 px-1 rounded">GH_PAT</code>, paste your token, and save</span>
-                                </li>
-                                <li className="flex gap-2">
-                                  <span className="bg-blue-500/20 text-blue-300 font-bold w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 text-[10px]">6</span>
-                                  <span>Go to <strong>Actions</strong> tab → select the workflow → click <strong>Run workflow</strong> to trigger it manually the first time</span>
-                                </li>
-                              </ol>
-                              <p className="text-[10px] text-blue-200/40 mt-3">
-                                After this, the GitHub Action will run daily and update your stats SVG automatically, including private commit counts.
-                              </p>
-                            </div>
-                          )}
-                        </div>
+                            {customData.includePrivateCommits && (
+                              <div className="mt-3 bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 shadow-inner">
+                                <h4 className="text-amber-400 font-bold text-xs flex items-center gap-2 mb-2 tracking-wide uppercase">
+                                  <Key className="w-3.5 h-3.5" /> Setup Required After Download
+                                </h4>
+                                <p className="text-xs text-amber-200/70 mb-2 leading-relaxed">
+                                  To access private commits, you must add a <code className="bg-black/40 px-1 py-0.5 rounded text-amber-300 font-mono">GH_PAT</code> secret with `repo` scope to your repository's <strong>Actions Secrets</strong>.
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        </motion.div>
                       )}
+                    </AnimatePresence>
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Action Bar */}
+              <motion.div 
+                variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+                className="mt-16 flex justify-center sticky top-6 z-50"
+              >
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                  onClick={handleGeneratePreview}
+                  className="flex items-center gap-3 bg-white text-black px-10 py-4 rounded-full font-medium text-lg transition-shadow shadow-[0_0_0_0_rgba(255,255,255,0)] hover:shadow-[0_0_30px_rgba(255,255,255,0.15)] ring-1 ring-black/5"
+                >
+                  <Eye className="w-5 h-5 opacity-70" /> Render Preview
+                </motion.button>
+              </motion.div>
+
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Preview Pane Area */}
+        <AnimatePresence>
+          {githubData && hasGeneratedPreview && (
+            <motion.div
+              id="preview-pane"
+              initial={{ opacity: 0, y: 40, filter: 'blur(10px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 100 }}
+              className="mt-8 border-t border-white/5 pt-20"
+            >
+              <div className="flex items-center justify-between mb-8 px-2">
+                <h2 className="text-2xl font-semibold text-white flex items-center gap-3 tracking-tight">
+                  <span className="bg-white/10 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium border border-white/5">2</span> 
+                  Output
+                </h2>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleDownload}
+                  className="flex items-center gap-2 bg-[#111] hover:bg-[#1a1a1a] border border-white/10 text-white px-6 py-2.5 rounded-full text-sm font-medium transition-colors"
+                >
+                  <Download className="w-4 h-4 opacity-70" /> Download Source
+                </motion.button>
+              </div>
+              
+              <div className="bg-[#0d1117] rounded-[2rem] border border-white/10 overflow-hidden shadow-2xl">
+                <div className="bg-[#161b22] px-6 py-4 border-b border-white/5 flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="flex gap-2">
+                      <div className="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
+                      <div className="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
+                      <div className="w-3 h-3 rounded-full bg-[#27c93f]"></div>
                     </div>
                   </div>
-
-                  <div className="pt-4 border-t border-white/5">
-                    <h3 className="text-lg font-medium text-white mb-4">Top Projects</h3>
-                    <div className="space-y-4">
-                      {customData.projects.map((proj, idx) => (
-                        <div key={idx} className="bg-black/20 p-4 rounded-xl border border-white/5 grid grid-cols-1 gap-3">
-                          <div className="flex items-center gap-2 text-sm text-neutral-400 mb-1">
-                            <span className="bg-white/10 w-6 h-6 rounded flex items-center justify-center">{idx + 1}</span>
-                            <span>Project Slot</span>
-                          </div>
-                          <div className="grid grid-cols-2 gap-3">
-                            <input
-                              className="bg-neutral-800/50 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-neutral-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                              placeholder="Name"
-                              value={proj.name}
-                              onChange={e => handleProjectChange(idx, 'name', e.target.value)}
-                            />
-                            <input
-                              className="bg-neutral-800/50 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-neutral-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                              placeholder="Language (e.g. JS)"
-                              value={proj.language || ''}
-                              onChange={e => handleProjectChange(idx, 'language', e.target.value)}
-                            />
-                          </div>
-                          <input
-                            className="bg-neutral-800/50 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-neutral-500 focus:outline-none focus:ring-1 focus:ring-blue-500 w-full"
-                            placeholder="URL"
-                            value={proj.url}
-                            onChange={e => handleProjectChange(idx, 'url', e.target.value)}
-                          />
-                        </div>
-                      ))}
-                      {customData.projects.length === 0 && (
-                        <p className="text-sm text-neutral-500">No public projects found to auto-fill.</p>
-                      )}
-                    </div>
+                  <div className="flex items-center gap-2 text-neutral-400 bg-black/20 px-3 py-1 rounded-md border border-white/5">
+                    <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor"><path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"></path></svg>
+                    <span className="text-xs font-mono">README.md</span>
                   </div>
+                  <div className="w-[52px]"></div> {/* Spacer for balance */}
                 </div>
-
+                <div className="p-8 md:p-12 flex flex-col items-center gap-8 min-h-[500px]">
+                  
+                  {/* Base Neofetch Preview */}
+                  <NeofetchPreview svgString={generateNeofetchSVG(githubData, customData)} />
+                  
+                  {/* Advanced Stats Preview */}
+                  {customData.includeAdvancedStats && (
+                    <div className="w-full max-w-[800px] flex flex-col items-center">
+                      {!advancedData ? (
+                        <div className="w-full aspect-[800/530] border-2 border-dashed border-blue-500/30 rounded-2xl p-8 flex flex-col items-center justify-center text-center bg-blue-500/5">
+                          <Loader2 className="w-8 h-8 animate-spin text-blue-400 mb-4" />
+                          <h4 className="text-white font-bold text-lg mb-2">Generating Advanced Stats...</h4>
+                          <p className="text-sm text-blue-200/60 max-w-sm">Fetching detailed language stats, lifetime commits, and contribution history from GitHub.</p>
+                        </div>
+                      ) : (
+                        <NeofetchPreview svgString={generateAdvancedStatsSVG(githubData.username, githubData.name, advancedData, customData)} />
+                      )}
+                      {advancedError && <p className="text-red-400 text-sm mt-4 bg-red-400/10 py-2 px-4 rounded-lg font-medium">{advancedError}</p>}
+                    </div>
+                  )}
+                  
+                </div>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
+
       </div>
+
+      <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(255, 255, 255, 0.02);
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(255, 255, 255, 0.2);
+        }
+      `}</style>
     </main>
   );
 }
 
 function Field({ label, name, value, onChange }: { label: string, name: string, value: string, onChange: any }) {
   return (
-    <div className="flex flex-col gap-1.5">
-      <label className="text-sm font-medium text-neutral-400">{label}</label>
+    <div className="flex flex-col gap-2">
+      <label className="text-[11px] font-semibold text-neutral-500 uppercase tracking-widest">{label}</label>
       <input
         name={name}
         value={value}
         onChange={onChange}
-        className="bg-black/20 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 transition-shadow"
+        className="bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-white/20 transition-colors font-light placeholder-neutral-600"
       />
     </div>
   );

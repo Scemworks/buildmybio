@@ -12,6 +12,7 @@ export interface GitHubData {
   topTopics: string;
   asciiArt: string;
   inferredRole: string;
+  inferredMood: string;
 }
 
 export async function fetchGitHubData(username: string): Promise<GitHubData> {
@@ -77,6 +78,20 @@ export async function fetchGitHubData(username: string): Promise<GitHubData> {
     else if (['c++', 'c'].includes(mainLang)) inferredRole = 'Systems Developer';
   }
 
+  // Infer mood based on bio keywords
+  let inferredMood = 'building . learning . shipping';
+  if (bioLower) {
+    if (bioLower.includes('coffee')) inferredMood = 'fueled by coffee ☕';
+    else if (bioLower.includes('learn')) inferredMood = 'always learning 📚';
+    else if (bioLower.includes('music')) inferredMood = 'coding to music 🎵';
+    else if (bioLower.includes('bug') || bioLower.includes('debug')) inferredMood = 'squashing bugs 🐛';
+    else if (bioLower.includes('open source') || bioLower.includes('oss')) inferredMood = 'open source enthusiast 🌍';
+    else if (bioLower.includes('sleep') || bioLower.includes('tired')) inferredMood = 'needs sleep 😴';
+    else if (bioLower.includes('design') || bioLower.includes('art')) inferredMood = 'designing things 🎨';
+    else if (bioLower.includes('hack')) inferredMood = 'hacking away 💻';
+    else if (user.bio && user.bio.length < 25) inferredMood = user.bio;
+  }
+
   // Fetch ASCII art
   let asciiArt = '';
   try {
@@ -101,6 +116,7 @@ export async function fetchGitHubData(username: string): Promise<GitHubData> {
     topTopics,
     asciiArt,
     inferredRole,
+    inferredMood,
     topProjects: topProjects.map(p => ({
       name: p.name,
       url: p.html_url,

@@ -46,7 +46,7 @@ export default function Home() {
         lang: data.topLanguages || 'HTML, CSS',
         tools: data.topTopics || 'Git, GitHub',
         role: data.inferredRole,
-        mood: data.bio && data.bio.length > 30 ? data.bio.slice(0, 40) + '...' : 'building . learning'
+        mood: data.inferredMood
       }));
     } catch (err: any) {
       setError(err.message || 'Failed to fetch user');

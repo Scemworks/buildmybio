@@ -202,11 +202,11 @@ export default function Home() {
         >
           <form onSubmit={handleFetch} className="relative group">
             <div className="absolute -inset-1 bg-gradient-to-r from-white/10 to-white/5 rounded-3xl blur-md opacity-0 group-hover:opacity-100 transition duration-700"></div>
-            <div className="relative flex items-center bg-[#111] border border-white/10 rounded-2xl p-1.5 shadow-2xl transition-all duration-300 focus-within:border-white/20 focus-within:shadow-[0_0_40px_rgba(255,255,255,0.05)]">
+            <div className="relative flex flex-col sm:flex-row items-stretch sm:items-center bg-[#111] border border-white/10 rounded-2xl p-1.5 sm:p-2 shadow-2xl transition-all duration-300 focus-within:border-white/20 focus-within:shadow-[0_0_40px_rgba(255,255,255,0.05)] gap-2 sm:gap-0">
               <input
                 type="text"
                 placeholder="Enter your GitHub Username"
-                className="w-full bg-transparent border-none text-white placeholder-neutral-600 px-5 py-4 focus:outline-none focus:ring-0 text-lg font-light"
+                className="w-full bg-transparent border-none text-white placeholder-neutral-600 px-4 sm:px-5 py-3 sm:py-4 focus:outline-none focus:ring-0 text-base sm:text-lg font-light text-center sm:text-left"
                 value={usernameInput}
                 onChange={e => setUsernameInput(e.target.value)}
                 required
@@ -214,7 +214,7 @@ export default function Home() {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex items-center justify-center bg-white text-black hover:bg-neutral-200 px-8 py-4 rounded-xl transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed group-hover:shadow-lg active:scale-95"
+                className="flex items-center justify-center bg-white text-black hover:bg-neutral-200 px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed group-hover:shadow-lg active:scale-95 w-full sm:w-auto"
               >
                 {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5 opacity-70" />}
                 <span className="ml-2.5">{loading ? 'Loading' : 'Initialize'}</span>
@@ -289,32 +289,36 @@ export default function Home() {
                       + Add Item
                     </button>
                   </div>
-                  <div className="space-y-3 overflow-y-auto pr-2 max-h-[280px] custom-scrollbar">
+                  <div className="space-y-3 overflow-y-auto pr-2 max-h-[350px] sm:max-h-[280px] custom-scrollbar">
                     {customData.infoFields.map((field, idx) => (
-                      <div key={idx} className="flex gap-2 items-center bg-black/20 p-2 rounded-xl border border-white/5">
-                        <input
-                          className="bg-transparent px-3 py-1.5 text-sm text-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500/50 rounded-lg w-1/3 font-medium placeholder-blue-200/30"
-                          placeholder="Category"
-                          value={field.label}
-                          onChange={e => handleInfoFieldChange(idx, 'label', e.target.value)}
-                        />
-                        <span className="text-white/20">:</span>
-                        <input
-                          className="bg-transparent px-3 py-1.5 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-500/50 rounded-lg flex-1 placeholder-white/30"
-                          placeholder="Content"
-                          value={field.value}
-                          onChange={e => handleInfoFieldChange(idx, 'value', e.target.value)}
-                        />
-                        <button 
-                          type="button" 
-                          onClick={() => {
-                            const newFields = customData.infoFields.filter((_, i) => i !== idx);
-                            setCustomData(p => ({ ...p, infoFields: newFields }));
-                          }}
-                          className="text-red-400/70 hover:text-red-400 hover:bg-red-400/10 w-8 h-8 flex items-center justify-center rounded-lg transition-colors font-bold"
-                        >
-                          ×
-                        </button>
+                      <div key={idx} className="flex flex-col sm:flex-row gap-2 sm:items-center bg-black/20 p-2 sm:p-2 rounded-xl border border-white/5 relative">
+                        <div className="flex items-center gap-2 w-full sm:w-1/3">
+                          <input
+                            className="bg-transparent px-3 py-1.5 text-sm text-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500/50 rounded-lg w-full font-medium placeholder-blue-200/30"
+                            placeholder="Category"
+                            value={field.label}
+                            onChange={e => handleInfoFieldChange(idx, 'label', e.target.value)}
+                          />
+                          <span className="text-white/20 hidden sm:inline">:</span>
+                        </div>
+                        <div className="flex items-center gap-2 w-full flex-1">
+                          <input
+                            className="bg-transparent px-3 py-1.5 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-500/50 rounded-lg w-full placeholder-white/30"
+                            placeholder="Content"
+                            value={field.value}
+                            onChange={e => handleInfoFieldChange(idx, 'value', e.target.value)}
+                          />
+                          <button 
+                            type="button" 
+                            onClick={() => {
+                              const newFields = customData.infoFields.filter((_, i) => i !== idx);
+                              setCustomData(p => ({ ...p, infoFields: newFields }));
+                            }}
+                            className="text-red-400/70 hover:text-red-400 hover:bg-red-400/10 w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg transition-colors font-bold absolute sm:relative right-2 top-2 sm:right-auto sm:top-auto"
+                          >
+                            ×
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -334,22 +338,22 @@ export default function Home() {
                     {customData.projects.map((proj, idx) => (
                       <div key={idx} className="bg-white/[0.02] p-5 rounded-2xl border border-white/5 grid grid-cols-1 gap-3 relative overflow-hidden group/item hover:bg-white/[0.04] transition-colors">
                         <div className="absolute top-0 left-0 w-1 h-full bg-neutral-800 group-hover/item:bg-purple-500/50 transition-colors" />
-                        <div className="grid grid-cols-2 gap-4 pl-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pl-3">
                           <input
-                            className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/30 focus:outline-none focus:border-purple-500/50 transition-colors"
+                            className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/30 focus:outline-none focus:border-purple-500/50 transition-colors w-full"
                             placeholder="Name"
                             value={proj.name}
                             onChange={e => handleProjectChange(idx, 'name', e.target.value)}
                           />
                           <input
-                            className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/30 focus:outline-none focus:border-purple-500/50 transition-colors"
+                            className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/30 focus:outline-none focus:border-purple-500/50 transition-colors w-full"
                             placeholder="Language (e.g. JS)"
                             value={proj.language || ''}
                             onChange={e => handleProjectChange(idx, 'language', e.target.value)}
                           />
                         </div>
                         <input
-                          className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/30 focus:outline-none focus:border-purple-500/50 w-full ml-2 transition-colors"
+                          className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/30 focus:outline-none focus:border-purple-500/50 w-full sm:ml-2 transition-colors ml-0 mt-1 sm:mt-0"
                           style={{ width: 'calc(100% - 0.5rem)' }}
                           placeholder="URL"
                           value={proj.url}
@@ -500,16 +504,16 @@ export default function Home() {
               transition={{ type: 'spring', damping: 25, stiffness: 100 }}
               className="mt-8 border-t border-white/5 pt-20"
             >
-              <div className="flex items-center justify-between mb-8 px-2">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-8 px-2">
                 <h2 className="text-2xl font-semibold text-white flex items-center gap-3 tracking-tight">
-                  <span className="bg-white/10 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium border border-white/5">2</span> 
+                  <span className="bg-white/10 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium border border-white/5 flex-shrink-0">2</span> 
                   Output
                 </h2>
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleDownload}
-                  className="flex items-center gap-2 bg-[#111] hover:bg-[#1a1a1a] border border-white/10 text-white px-6 py-2.5 rounded-full text-sm font-medium transition-colors"
+                  className="flex items-center gap-2 bg-[#111] hover:bg-[#1a1a1a] border border-white/10 text-white px-6 py-2.5 rounded-full text-sm font-medium transition-colors w-full sm:w-auto justify-center"
                 >
                   <Download className="w-4 h-4 opacity-70" /> Download Source
                 </motion.button>

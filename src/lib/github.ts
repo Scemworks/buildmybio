@@ -66,6 +66,7 @@ export async function fetchGitHubData(username: string): Promise<GitHubData> {
   let inferredRole = 'Software Engineer';
   const topLangsList = topLanguages.split(', ').map(l => l.toLowerCase());
   const mainLang = topLangsList[0];
+  const accountAgeYears = (new Date().getTime() - new Date(user.created_at).getTime()) / (1000 * 3600 * 24 * 365);
 
   if (bioLower.includes('frontend') || bioLower.includes('front-end')) inferredRole = 'Frontend Developer';
   else if (bioLower.includes('backend') || bioLower.includes('back-end')) inferredRole = 'Backend Developer';
@@ -74,6 +75,9 @@ export async function fetchGitHubData(username: string): Promise<GitHubData> {
   else if (bioLower.includes('machine learning') || bioLower.includes('ml engineer') || bioLower.includes('ai ')) inferredRole = 'AI/ML Engineer';
   else if (bioLower.includes('devops') || bioLower.includes('sre') || bioLower.includes('sysadmin')) inferredRole = 'DevOps Engineer';
   else if (bioLower.includes('mobile') || bioLower.includes('ios') || bioLower.includes('android')) inferredRole = 'Mobile Developer';
+  else if (bioLower.includes('security') || bioLower.includes('cyber') || bioLower.includes('infosec')) inferredRole = 'Security Engineer';
+  else if (bioLower.includes('game') || bioLower.includes('unity') || bioLower.includes('unreal')) inferredRole = 'Game Developer';
+  else if (bioLower.includes('web3') || bioLower.includes('crypto') || bioLower.includes('blockchain')) inferredRole = 'Web3 Developer';
   else if (bioLower.includes('student')) inferredRole = 'Student';
   else if (bioLower.includes('designer') || bioLower.includes('ui/ux')) inferredRole = 'UI/UX Designer';
   else if (bioLower.includes('software engineer')) inferredRole = 'Software Engineer';
@@ -83,6 +87,7 @@ export async function fetchGitHubData(username: string): Promise<GitHubData> {
     else if (['python', 'jupyter notebook', 'r'].includes(mainLang)) inferredRole = 'Backend / Data Developer';
     else if (['java', 'c#', 'go', 'rust', 'ruby', 'php'].includes(mainLang)) inferredRole = 'Backend Developer';
     else if (['swift', 'kotlin', 'dart', 'objective-c'].includes(mainLang)) inferredRole = 'Mobile Developer';
+    else if (['solidity', 'vyper'].includes(mainLang)) inferredRole = 'Web3 Developer';
     else if (['c++', 'c'].includes(mainLang)) inferredRole = 'Systems Developer';
   }
 
@@ -106,6 +111,10 @@ export async function fetchGitHubData(username: string): Promise<GitHubData> {
       inferredMood = 'shipping code 🚢';
     } else if (daysSinceLastUpdate > 30) {
       inferredMood = 'taking a break 🏖️';
+    } else if (accountAgeYears > 10) {
+      inferredMood = 'feeling nostalgic 🕰️';
+    } else if (user.public_gists > 30) {
+      inferredMood = 'sharing snippets 📝';
     } else if (totalStars > 100) {
       inferredMood = 'maintaining open source 🔧';
     } else if (user.followers > 50) {
@@ -114,6 +123,14 @@ export async function fetchGitHubData(username: string): Promise<GitHubData> {
       inferredMood = 'crunching data 📊';
     } else if (mainLang === 'javascript' || mainLang === 'typescript') {
       inferredMood = 'brewing javascript ☕';
+    } else if (mainLang === 'java') {
+      inferredMood = 'drinking java ☕';
+    } else if (mainLang === 'go') {
+      inferredMood = 'gophering around 🐹';
+    } else if (mainLang === 'ruby') {
+      inferredMood = 'polishing gems 💎';
+    } else if (mainLang === 'php') {
+      inferredMood = 'echoing out 🐘';
     } else {
       inferredMood = 'planning the next project 💭';
     }
@@ -123,10 +140,18 @@ export async function fetchGitHubData(username: string): Promise<GitHubData> {
   let inferredTagline = 'Building cool stuff, one commit at a time';
   if (totalStars > 500) {
     inferredTagline = 'Creating impactful open source loved by many';
+  } else if (user.followers > 200) {
+    inferredTagline = 'Inspiring developers worldwide';
   } else if (user.public_repos > 50) {
     inferredTagline = 'Prolific builder, turning coffee into code';
+  } else if (accountAgeYears > 10) {
+    inferredTagline = 'Coding since the dark ages of the internet';
+  } else if (user.public_gists > 20) {
+    inferredTagline = 'Sharing knowledge, one snippet at a time';
   } else if (mainLang === 'rust') {
     inferredTagline = 'Rewriting everything in Rust 🦀';
+  } else if (mainLang === 'go') {
+    inferredTagline = 'Building fast, concurrent backend systems in Go';
   } else if (inferredRole === 'Frontend Developer') {
     inferredTagline = 'Crafting beautiful pixel-perfect user interfaces';
   } else if (inferredRole === 'Backend Developer') {
@@ -139,6 +164,12 @@ export async function fetchGitHubData(username: string): Promise<GitHubData> {
     inferredTagline = 'Training models and pushing AI boundaries';
   } else if (inferredRole === 'DevOps Engineer') {
     inferredTagline = 'Automating the world, one script at a time';
+  } else if (inferredRole === 'Game Developer') {
+    inferredTagline = 'Crafting digital worlds and interactive experiences';
+  } else if (inferredRole === 'Security Engineer') {
+    inferredTagline = 'Securing systems and hunting vulnerabilities';
+  } else if (inferredRole === 'Web3 Developer') {
+    inferredTagline = 'Building the decentralized web';
   }
 
   // Fetch ASCII art

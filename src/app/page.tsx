@@ -22,6 +22,7 @@ export default function Home() {
     editor: 'VS Code',
     status: 'online',
     mood: 'building . learning',
+    tagline: 'Building cool stuff, one commit at a time',
     projects: []
   });
 
@@ -173,6 +174,7 @@ export default function Home() {
                   </div>
                   
                   <Field label="Mood / Bio" name="mood" value={customData.mood} onChange={handleCustomChange} />
+                  <Field label="Tagline (Below ASCII Name)" name="tagline" value={customData.tagline} onChange={handleCustomChange} />
 
                   <div className="pt-4 border-t border-white/5">
                     <h3 className="text-lg font-medium text-white mb-4">Top Projects</h3>

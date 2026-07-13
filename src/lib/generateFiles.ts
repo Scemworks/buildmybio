@@ -11,6 +11,7 @@ export interface CustomizationData {
   editor: string;
   status: string;
   mood: string;
+  tagline: string;
   projects: { name: string; url: string; language: string | null }[];
 }
 
@@ -144,7 +145,7 @@ export function generateNeofetchSVG(data: GitHubData, custom: CustomizationData)
       }
       
       <text x="40" y="210" font-size="12" fill="#238636">==================================================</text>
-      <text x="40" y="230" font-size="12" fill="#238636">&#160;&#160;&#160;&#160;Building&#160;cool&#160;stuff,&#160;one&#160;commit&#160;at&#160;a&#160;time&#160;&#160;&#160;&#160;&#160;</text>
+      <text x="220" y="230" font-size="12" fill="#238636" text-anchor="middle">${(custom.tagline || 'Building cool stuff, one commit at a time').replace(/ /g, '&#160;')}</text>
       <text x="40" y="250" font-size="12" fill="#238636">==================================================</text>
     </g>
 

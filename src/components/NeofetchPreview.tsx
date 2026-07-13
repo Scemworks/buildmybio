@@ -12,7 +12,7 @@ export default function NeofetchPreview({ svgString }: { svgString: string }) {
     >
       {/* We need to ensure the SVG scales correctly */}
       <div 
-        className="w-full max-w-[800px] aspect-[800/530]"
+        className="w-full max-w-[800px] aspect-[800/530] [&>svg]:w-full [&>svg]:h-full [&>svg]:block"
         dangerouslySetInnerHTML={{ __html: svgString }} 
       />
     </motion.div>

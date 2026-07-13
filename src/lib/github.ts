@@ -21,7 +21,8 @@ export async function fetchGitHubData(username: string): Promise<GitHubData> {
   if (!userRes.ok) throw new Error('User not found');
   const user = await userRes.json();
 
-  const reposRes = await fetch(`https://api.github.com/users/${username}/repos?per_page=100`);
+  let daysSinceLastUpdate = 999;
+  const reposRes = await fetch(`https://api.github.com/users/${username}/repos?per_page=100&sort=updated`);
   let totalStars = 0;
   let topProjects: { name: string; html_url: string; language: string | null; stargazers_count: number }[] = [];
   let topLanguages = '';
@@ -31,6 +32,12 @@ export async function fetchGitHubData(username: string): Promise<GitHubData> {
     const repos = await reposRes.json();
     const languageCounts: Record<string, number> = {};
     const topicCounts: Record<string, number> = {};
+    
+    if (repos.length > 0) {
+      const sortedByUpdate = [...repos].sort((a: any, b: any) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
+      const lastUpdate = new Date(sortedByUpdate[0].updated_at);
+      daysSinceLastUpdate = (new Date().getTime() - lastUpdate.getTime()) / (1000 * 3600 * 24);
+    }
 
     for (const repo of repos) {
       totalStars += repo.stargazers_count || 0;
@@ -79,18 +86,29 @@ export async function fetchGitHubData(username: string): Promise<GitHubData> {
     else if (['c++', 'c'].includes(mainLang)) inferredRole = 'Systems Developer';
   }
 
-  // Infer mood based on bio keywords
-  let inferredMood = 'building . learning . shipping';
-  if (bioLower) {
-    if (bioLower.includes('coffee')) inferredMood = 'fueled by coffee ☕';
-    else if (bioLower.includes('learn')) inferredMood = 'always learning 📚';
-    else if (bioLower.includes('music')) inferredMood = 'coding to music 🎵';
-    else if (bioLower.includes('bug') || bioLower.includes('debug')) inferredMood = 'squashing bugs 🐛';
-    else if (bioLower.includes('open source') || bioLower.includes('oss')) inferredMood = 'open source enthusiast 🌍';
-    else if (bioLower.includes('sleep') || bioLower.includes('tired')) inferredMood = 'needs sleep 😴';
-    else if (bioLower.includes('design') || bioLower.includes('art')) inferredMood = 'designing things 🎨';
-    else if (bioLower.includes('hack')) inferredMood = 'hacking away 💻';
-    else if (user.bio && user.bio.length < 25) inferredMood = user.bio;
+  // Infer mood based on bio keywords and recent activity
+  let inferredMood = '';
+  
+  if (bioLower.includes('coffee')) inferredMood = 'fueled by coffee ☕';
+  else if (bioLower.includes('learn')) inferredMood = 'always learning 📚';
+  else if (bioLower.includes('music')) inferredMood = 'coding to music 🎵';
+  else if (bioLower.includes('bug') || bioLower.includes('debug')) inferredMood = 'squashing bugs 🐛';
+  else if (bioLower.includes('open source') || bioLower.includes('oss')) inferredMood = 'open source enthusiast 🌍';
+  else if (bioLower.includes('sleep') || bioLower.includes('tired')) inferredMood = 'needs sleep 😴';
+  else if (bioLower.includes('design') || bioLower.includes('art')) inferredMood = 'designing things 🎨';
+  else if (bioLower.includes('hack')) inferredMood = 'hacking away 💻';
+  else if (user.bio && user.bio.length < 25) inferredMood = user.bio;
+  
+  if (!inferredMood) {
+    if (daysSinceLastUpdate < 2) {
+      inferredMood = 'in the zone 🚀';
+    } else if (daysSinceLastUpdate < 7) {
+      inferredMood = 'shipping code 🚢';
+    } else if (daysSinceLastUpdate > 30) {
+      inferredMood = 'taking a break 🏖️';
+    } else {
+      inferredMood = 'building . learning . shipping';
+    }
   }
 
   // Infer tagline

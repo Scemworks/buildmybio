@@ -186,7 +186,7 @@ export default function Home() {
             <Terminal className="w-7 h-7 text-neutral-300" />
           </motion.div>
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tighter text-white mb-6">
-            Neofetch <span className="text-transparent bg-clip-text bg-gradient-to-r from-neutral-400 to-white">Bio</span>
+            BuildMy<span className="text-transparent bg-clip-text bg-gradient-to-r from-neutral-400 to-white">Bio</span>
           </h1>
           <p className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto font-light leading-relaxed">
             Generate an animated, self-updating terminal SVG for your GitHub Profile.

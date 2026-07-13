@@ -13,6 +13,7 @@ export interface GitHubData {
   asciiArt: string;
   inferredRole: string;
   inferredMood: string;
+  inferredTagline: string;
 }
 
 export async function fetchGitHubData(username: string): Promise<GitHubData> {
@@ -92,6 +93,28 @@ export async function fetchGitHubData(username: string): Promise<GitHubData> {
     else if (user.bio && user.bio.length < 25) inferredMood = user.bio;
   }
 
+  // Infer tagline
+  let inferredTagline = 'Building cool stuff, one commit at a time';
+  if (totalStars > 500) {
+    inferredTagline = 'Creating impactful open source loved by many';
+  } else if (user.public_repos > 50) {
+    inferredTagline = 'Prolific builder, turning coffee into code';
+  } else if (mainLang === 'rust') {
+    inferredTagline = 'Rewriting everything in Rust 🦀';
+  } else if (inferredRole === 'Frontend Developer') {
+    inferredTagline = 'Crafting beautiful pixel-perfect user interfaces';
+  } else if (inferredRole === 'Backend Developer') {
+    inferredTagline = 'Architecting robust backend systems and APIs';
+  } else if (inferredRole === 'Mobile Developer') {
+    inferredTagline = 'Building intuitive mobile experiences';
+  } else if (inferredRole === 'Data Scientist') {
+    inferredTagline = 'Turning raw data into actionable insights';
+  } else if (inferredRole === 'AI/ML Engineer') {
+    inferredTagline = 'Training models and pushing AI boundaries';
+  } else if (inferredRole === 'DevOps Engineer') {
+    inferredTagline = 'Automating the world, one script at a time';
+  }
+
   // Fetch ASCII art
   let asciiArt = '';
   try {
@@ -117,6 +140,7 @@ export async function fetchGitHubData(username: string): Promise<GitHubData> {
     asciiArt,
     inferredRole,
     inferredMood,
+    inferredTagline,
     topProjects: topProjects.map(p => ({
       name: p.name,
       url: p.html_url,

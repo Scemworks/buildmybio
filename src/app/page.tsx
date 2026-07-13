@@ -55,7 +55,8 @@ export default function Home() {
         ...prev,
         infoFields: defaultFields,
         projects: data.topProjects.map(p => ({ ...p })),
-        mood: data.inferredMood
+        mood: data.inferredMood,
+        tagline: data.inferredTagline
       }));
     } catch (err: any) {
       setError(err.message || 'Failed to fetch user');

@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Terminal, Download, Loader2, Sparkles, Key } from 'lucide-react';
 import { fetchGitHubData, GitHubData, fetchAdvancedGitHubData, AdvancedGitHubData } from '@/lib/github';
 import { generateNeofetchSVG, CustomizationData, downloadFilesZip } from '@/lib/generateFiles';
-import { generateAdvancedStatsSVG } from '@/lib/mockAdvancedStats';
+import { generateAdvancedStatsSVG } from '@/lib/AdvancedStats';
 import NeofetchPreview from '@/components/NeofetchPreview';
 
 export default function Home() {

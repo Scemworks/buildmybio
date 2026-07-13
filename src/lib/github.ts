@@ -11,6 +11,7 @@ export interface GitHubData {
   topLanguages: string;
   topTopics: string;
   asciiArt: string;
+  inferredRole: string;
 }
 
 export async function fetchGitHubData(username: string): Promise<GitHubData> {
@@ -51,6 +52,31 @@ export async function fetchGitHubData(username: string): Promise<GitHubData> {
     topTopics = topTopicsArr.join(', ');
   }
 
+  // Infer role based on bio and top languages
+  const bioLower = user.bio?.toLowerCase() || '';
+  let inferredRole = 'Software Engineer';
+  const topLangsList = topLanguages.split(', ').map(l => l.toLowerCase());
+  const mainLang = topLangsList[0];
+
+  if (bioLower.includes('frontend') || bioLower.includes('front-end')) inferredRole = 'Frontend Developer';
+  else if (bioLower.includes('backend') || bioLower.includes('back-end')) inferredRole = 'Backend Developer';
+  else if (bioLower.includes('fullstack') || bioLower.includes('full-stack') || bioLower.includes('full stack')) inferredRole = 'Fullstack Developer';
+  else if (bioLower.includes('data scientist') || bioLower.includes('data science') || bioLower.includes('data analyst')) inferredRole = 'Data Scientist';
+  else if (bioLower.includes('machine learning') || bioLower.includes('ml engineer') || bioLower.includes('ai ')) inferredRole = 'AI/ML Engineer';
+  else if (bioLower.includes('devops') || bioLower.includes('sre') || bioLower.includes('sysadmin')) inferredRole = 'DevOps Engineer';
+  else if (bioLower.includes('mobile') || bioLower.includes('ios') || bioLower.includes('android')) inferredRole = 'Mobile Developer';
+  else if (bioLower.includes('student')) inferredRole = 'Student';
+  else if (bioLower.includes('designer') || bioLower.includes('ui/ux')) inferredRole = 'UI/UX Designer';
+  else if (bioLower.includes('software engineer')) inferredRole = 'Software Engineer';
+  else if (bioLower.includes('developer')) inferredRole = 'Developer';
+  else if (mainLang) {
+    if (['javascript', 'typescript', 'html', 'css', 'svelte', 'vue'].includes(mainLang)) inferredRole = 'Frontend Developer';
+    else if (['python', 'jupyter notebook', 'r'].includes(mainLang)) inferredRole = 'Backend / Data Developer';
+    else if (['java', 'c#', 'go', 'rust', 'ruby', 'php'].includes(mainLang)) inferredRole = 'Backend Developer';
+    else if (['swift', 'kotlin', 'dart', 'objective-c'].includes(mainLang)) inferredRole = 'Mobile Developer';
+    else if (['c++', 'c'].includes(mainLang)) inferredRole = 'Systems Developer';
+  }
+
   // Fetch ASCII art
   let asciiArt = '';
   try {
@@ -74,6 +100,7 @@ export async function fetchGitHubData(username: string): Promise<GitHubData> {
     topLanguages,
     topTopics,
     asciiArt,
+    inferredRole,
     topProjects: topProjects.map(p => ({
       name: p.name,
       url: p.html_url,

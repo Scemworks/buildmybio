@@ -1,7 +1,25 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import figlet from 'figlet';
+import { checkRateLimit } from '@/lib/rateLimit';
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
+  const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || '127.0.0.1';
+  const { success, limit, remaining, reset } = checkRateLimit(ip, 60, 60000); // 60 requests per minute
+  
+  if (!success) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please try again later.' },
+      { 
+        status: 429,
+        headers: {
+          'X-RateLimit-Limit': limit.toString(),
+          'X-RateLimit-Remaining': remaining.toString(),
+          'X-RateLimit-Reset': reset.toString(),
+        }
+      }
+    );
+  }
+
   const { searchParams } = new URL(request.url);
   const text = searchParams.get('text');
   

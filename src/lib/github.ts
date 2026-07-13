@@ -205,3 +205,241 @@ export async function fetchGitHubData(username: string): Promise<GitHubData> {
     }))
   };
 }
+
+export interface AdvancedGitHubData {
+  totalStars: number;
+  totalCommits: number;
+  totalPrivateCommits: number;
+  totalPRs: number;
+  totalIssues: number;
+  contributionsLastYear: number;
+  currentStreak: number;
+  longestStreak: number;
+  currentStreakDate: string;
+  longestStreakDate: string;
+  totalContributions: number;
+  createdYear: number;
+  topLangs: { name: string; size: number; color: string }[];
+  totalLangSize: number;
+}
+
+export async function fetchAdvancedGitHubData(username: string, token: string): Promise<AdvancedGitHubData> {
+  const runQuery = async (query: string, variables: any) => {
+    const res = await fetch('https://api.github.com/graphql', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ query, variables })
+    });
+    if (!res.ok) throw new Error(`GraphQL Error: ${res.statusText}`);
+    return res.json();
+  };
+
+  const initQuery = `
+    query($username: String!) {
+      user(login: $username) {
+        createdAt
+      }
+    }
+  `;
+  const initRes = await runQuery(initQuery, { username });
+  if (initRes.errors) throw new Error(initRes.errors[0].message);
+  
+  const createdAt = initRes.data.user.createdAt;
+  const createdYear = parseInt(createdAt.substring(0, 4));
+  const currentYear = new Date().getFullYear();
+
+  let yearsQueries = "";
+  for (let y = createdYear; y <= currentYear; y++) {
+    const fromDate = `${y}-01-01T00:00:00Z`;
+    const toDate = `${y}-12-31T23:59:59Z`;
+    yearsQueries += `
+      year_${y}: contributionsCollection(from: "${fromDate}", to: "${toDate}") {
+        totalCommitContributions
+        restrictedContributionsCount
+        totalPullRequestContributions
+        totalIssueContributions
+        contributionCalendar {
+          totalContributions
+          weeks {
+            contributionDays {
+              contributionCount
+              date
+            }
+          }
+        }
+      }
+    `;
+  }
+
+  const fullQuery = `
+    query($username: String!) {
+      user(login: $username) {
+        repositories(first: 100, ownerAffiliations: OWNER, isFork: false, orderBy: {field: STARGAZERS, direction: DESC}) {
+          nodes {
+            stargazers { totalCount }
+            languages(first: 10, orderBy: {field: SIZE, direction: DESC}) {
+              edges { size node { color name } }
+            }
+          }
+        }
+        repositoriesContributedTo(first: 1, contributionTypes: [COMMIT, ISSUE, PULL_REQUEST, REPOSITORY]) {
+          totalCount
+        }
+        ${yearsQueries}
+      }
+    }
+  `;
+
+  const fullRes = await runQuery(fullQuery, { username });
+  if (fullRes.errors) throw new Error(fullRes.errors[0].message);
+  
+  const userData = fullRes.data.user;
+
+  // Try to fetch private repo commits if the requested user is the authenticated viewer
+  let privateRepoCommits = 0;
+  try {
+    const viewerQuery = `
+      query {
+        viewer {
+          login
+          repositories(first: 100, privacy: PRIVATE, ownerAffiliations: OWNER) {
+            nodes {
+              defaultBranchRef {
+                target {
+                  ... on Commit {
+                    history(first: 0) {
+                      totalCount
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    `;
+    const viewerRes = await runQuery(viewerQuery, {});
+    if (viewerRes.data?.viewer?.login?.toLowerCase() === username.toLowerCase()) {
+      viewerRes.data.viewer.repositories.nodes.forEach((repo: any) => {
+        if (repo.defaultBranchRef?.target?.history?.totalCount) {
+          privateRepoCommits += repo.defaultBranchRef.target.history.totalCount;
+        }
+      });
+    }
+  } catch (e) {
+    // Ignore errors here, this is a best-effort fetch
+  }
+
+  let totalStars = 0;
+  const languagesMap: Record<string, { size: number; color: string }> = {};
+  let totalLangSize = 0;
+
+  userData.repositories.nodes.forEach((repo: any) => {
+    totalStars += repo.stargazers.totalCount;
+    repo.languages.edges.forEach((edge: any) => {
+      const name = edge.node.name;
+      const color = edge.node.color || '#8b949e';
+      const size = edge.size;
+      if (!languagesMap[name]) languagesMap[name] = { size: 0, color };
+      languagesMap[name].size += size;
+      totalLangSize += size;
+    });
+  });
+
+  const topLangs = Object.entries(languagesMap)
+    .map(([name, data]) => ({ name, ...data }))
+    .sort((a, b) => b.size - a.size)
+    .slice(0, 5);
+
+  let totalCommits = 0;
+  let totalPrivateCommits = 0;
+  let totalPRs = 0;
+  let totalIssues = 0;
+  const contributionsLastYear = userData.repositoriesContributedTo?.totalCount || 0;
+
+  let allDays: { date: string; count: number }[] = [];
+
+  for (let y = createdYear; y <= currentYear; y++) {
+    const yearData = userData[`year_${y}`];
+    if (!yearData) continue;
+    totalCommits += yearData.totalCommitContributions;
+    totalPrivateCommits += yearData.restrictedContributionsCount;
+    totalPRs += yearData.totalPullRequestContributions;
+    totalIssues += yearData.totalIssueContributions;
+
+    yearData.contributionCalendar.weeks.forEach((week: any) => {
+      week.contributionDays.forEach((day: any) => {
+        allDays.push({ date: day.date, count: day.contributionCount });
+      });
+    });
+  }
+
+  // Override totalPrivateCommits if we fetched it from private repos directly
+  if (privateRepoCommits > 0) {
+    totalPrivateCommits = privateRepoCommits;
+  }
+
+  allDays.sort((a, b) => a.date.localeCompare(b.date));
+  const todayStr = new Date().toISOString().split('T')[0];
+  allDays = allDays.filter(d => d.date <= todayStr);
+
+  let currentStreak = 0, longestStreak = 0;
+  let currentStart = "", currentEnd = "";
+  let longestStart = "", longestEnd = "";
+  let tempStreak = 0, tempStart = "";
+  let totalContributions = 0;
+
+  allDays.forEach(day => {
+    totalContributions += day.count;
+    if (day.count > 0) {
+      if (tempStreak === 0) tempStart = day.date;
+      tempStreak++;
+      if (tempStreak > longestStreak) {
+        longestStreak = tempStreak;
+        longestStart = tempStart;
+        longestEnd = day.date;
+      }
+    } else {
+      tempStreak = 0;
+    }
+  });
+
+  let idx = allDays.length - 1;
+  if (idx >= 0) {
+    if (allDays[idx].count === 0) idx--;
+    if (idx >= 0 && allDays[idx].count > 0) {
+      currentEnd = allDays[idx].date;
+      while (idx >= 0 && allDays[idx].count > 0) {
+        currentStreak++;
+        currentStart = allDays[idx].date;
+        idx--;
+      }
+    }
+  }
+
+  const formatDate = (dStr: string) => {
+    if (!dStr) return "None";
+    const d = new Date(dStr);
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+
+  return {
+    totalStars,
+    totalCommits,
+    totalPrivateCommits,
+    totalPRs,
+    totalIssues,
+    contributionsLastYear,
+    currentStreak,
+    longestStreak,
+    currentStreakDate: currentStreak > 0 ? `${formatDate(currentStart)} - ${formatDate(currentEnd)}` : "None",
+    longestStreakDate: longestStreak > 0 ? `${formatDate(longestStart)} - ${formatDate(longestEnd)}` : "None",
+    totalContributions,
+    createdYear,
+    topLangs,
+    totalLangSize
+  };
+}

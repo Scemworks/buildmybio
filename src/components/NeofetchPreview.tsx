@@ -8,7 +8,7 @@ export default function NeofetchPreview({ svgString }: { svgString: string }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="w-full flex justify-center items-center p-4 bg-black/40 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl overflow-hidden"
+      className="w-full flex justify-center items-center p-4 bg-[#141210]/40 backdrop-blur-xl rounded-2xl border border-[#e8dcc8]/[0.05] shadow-2xl overflow-hidden"
     >
       {/* We need to ensure the SVG scales correctly */}
       <div 

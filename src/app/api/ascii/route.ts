@@ -1,6 +1,11 @@
 import { NextResponse, NextRequest } from 'next/server';
 import figlet from 'figlet';
+import ansiShadowFont from 'figlet/fonts/ANSI Shadow';
 import { checkRateLimit } from '@/lib/rateLimit';
+
+// Pre-parse the font so it's bundled into the serverless function
+// instead of relying on filesystem access (which fails on Vercel).
+figlet.parseFont('ANSI Shadow', ansiShadowFont);
 
 export async function GET(request: NextRequest) {
   const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || '127.0.0.1';

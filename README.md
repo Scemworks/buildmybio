@@ -1,6 +1,27 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎨 BuildMyBio
 
-## Getting Started
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-buildmybio.vercel.app-c2703e?style=for-the-badge)](https://buildmybio.vercel.app)
+
+BuildMyBio is a modern Next.js application that generates an animated, self-updating terminal SVG (Neofetch-style) for your GitHub Profile README. Try it live at [buildmybio.vercel.app](https://buildmybio.vercel.app) or host it yourself! It infers your developer persona, extracts top projects, and crafts beautifully animated statistics—all without needing a database.
+
+## ✨ Features
+
+- **Neofetch Style:** Generate a sleek terminal-style SVG directly from your GitHub username.
+- **Smart Inference:** Automatically infers your role (e.g., Frontend Developer, AI/ML Engineer), mood, and a personalized tagline based on your GitHub activity and bio.
+- **Advanced Integrations:** Include your lifetime commits, pull requests, issues, streak data, and top language distributions.
+- **Customizable:** Tweak your identity, categories, and top projects in real-time with an interactive UI.
+- **Ready to Use:** One-click download provides you with a ZIP file containing the SVG and a ready-to-paste `README.md`.
+- **Private Commit Support:** Securely fetch your private contributions using a GitHub Personal Access Token (PAT).
+
+## 🚀 Tech Stack
+
+- **Framework:** Next.js (App Router)
+- **Styling:** Tailwind CSS V4
+- **Animation:** Framer Motion
+- **Icons:** Lucide React
+- **Typography:** Custom ASCII fonts via `figlet`
+
+## 🛠️ Getting Started
 
 First, run the development server:
 
@@ -14,23 +35,21 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the app in action.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🔐 Advanced Stats Setup (Optional)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+If you enable the **Generate Advanced Stats SVG** and want to include **Private Commits**, you'll need to set up a GitHub PAT (Personal Access Token) inside your profile repository's GitHub Actions.
 
-## Learn More
+1. Go to [github.com/settings/tokens](https://github.com/settings/tokens?type=beta) and generate a new token (Classic).
+2. Check the `read:user` and `repo` scopes.
+3. In your GitHub profile repository (e.g., `yourusername/yourusername`), go to **Settings** → **Secrets and variables** → **Actions**.
+4. Add a **New repository secret** named `GH_PAT` and paste your token.
 
-To learn more about Next.js, take a look at the following resources:
+## 🤝 Contributing
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Contributions are always welcome! Feel free to open an issue or submit a pull request if you'd like to improve the project.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📄 License
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is open-source and available for everyone to use and modify.

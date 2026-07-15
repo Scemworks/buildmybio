@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%" shape-rendering="geometricPrecision">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e1c1a" />
+      <stop offset="100%" stop-color="#141210" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d4956a" />
+      <stop offset="100%" stop-color="#c2703e" />
+    </linearGradient>
+    <linearGradient id="accentLight" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#c2703e" />
+      <stop offset="100%" stop-color="#d4956a" />
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+    <filter id="glow-strong" x="-50%" y="-50%" width="200%" height="200%" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="24" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="512" height="512" fill="url(#bg)" />
+
+  <!-- Grid overlay for "tech/stats" vibe -->
+  <g stroke="rgba(232, 220, 200, 0.04)" stroke-width="2">
+    <line x1="0" y1="128" x2="512" y2="128" />
+    <line x1="0" y1="256" x2="512" y2="256" />
+    <line x1="0" y1="384" x2="512" y2="384" />
+    <line x1="128" y1="0" x2="128" y2="512" />
+    <line x1="256" y1="0" x2="256" y2="512" />
+    <line x1="384" y1="0" x2="384" y2="512" />
+  </g>
+
+  <!-- Logo Mark -->
+  <g transform="translate(100, 52)">
+    <!-- Vertical stem / commit line -->
+    <path d="M 64 64 L 64 384" stroke="url(#accentLight)" stroke-width="48" stroke-linecap="round" />
+    
+    <!-- Top loop -->
+    <path d="M 64 64 L 170 64 C 220 64 250 96 250 144 C 250 192 220 224 170 224 L 64 224" fill="none" stroke="url(#accentLight)" stroke-width="48" stroke-linecap="round" stroke-linejoin="round" />
+    
+    <!-- Bottom loop -->
+    <path d="M 64 224 L 190 224 C 250 224 286 260 286 304 C 286 348 250 384 190 384 L 64 384" fill="none" stroke="url(#accent)" stroke-width="48" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow-strong)" />
+    <path d="M 64 224 L 190 224 C 250 224 286 260 286 304 C 286 348 250 384 190 384 L 64 384" fill="none" stroke="url(#accent)" stroke-width="48" stroke-linecap="round" stroke-linejoin="round" />
+    
+    <!-- Decorative nodes representing commits -->
+    <circle cx="64" cy="64" r="28" fill="#1e1c1a" stroke="#e8dcc8" stroke-width="8" />
+    <circle cx="64" cy="224" r="28" fill="#1e1c1a" stroke="#e8dcc8" stroke-width="8" />
+    <circle cx="64" cy="384" r="28" fill="#1e1c1a" stroke="#e8dcc8" stroke-width="8" />
+    
+    <!-- Graph upward trend overlapping the B -->
+    <path d="M -10 320 L 90 220 L 160 270 L 300 130" fill="none" stroke="#e8dcc8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)" />
+    <path d="M -10 320 L 90 220 L 160 270 L 300 130" fill="none" stroke="#e8dcc8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />
+    <circle cx="300" cy="130" r="14" fill="#e8dcc8" filter="url(#glow)" />
+    <circle cx="300" cy="130" r="14" fill="#e8dcc8" />
+    <circle cx="300" cy="130" r="6" fill="#1e1c1a" />
+  </g>
+</svg>

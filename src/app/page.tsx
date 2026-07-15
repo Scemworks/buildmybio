@@ -515,7 +515,37 @@ export default function Home() {
                               </div>
                             </label>
 
-
+                            {/* Setup Required Block */}
+                            <div className="mt-5 bg-[#c2703e]/[0.08] border border-[#c2703e]/20 rounded-xl p-5 shadow-inner">
+                              <h4 className="text-[#c2703e] font-bold text-sm flex items-center gap-2 mb-3 tracking-wide uppercase">
+                                <Key className="w-4 h-4" /> Setup Required After Download
+                              </h4>
+                              <p className="text-sm text-[#d4956a]/80 mb-4 leading-relaxed">
+                                To avoid API rate limits and include private commits, you must add a <code className="bg-[#141210]/60 px-1 py-0.5 rounded text-[#c2703e] font-mono">GH_PAT</code> secret with <code className="bg-[#141210]/60 px-1 py-0.5 rounded text-[#c2703e] font-mono">read:user</code> and <code className="bg-[#141210]/60 px-1 py-0.5 rounded text-[#c2703e] font-mono">repo</code> scopes to your repository's <strong>Actions Secrets</strong>.
+                              </p>
+                              <ol className="text-sm text-[#e8dcc8]/60 space-y-3 list-none">
+                                <li className="flex gap-3 items-center">
+                                  <span className="bg-[#c2703e]/20 text-[#c2703e] font-bold w-5 h-5 rounded flex items-center justify-center flex-shrink-0 text-[10px]">1</span>
+                                  <span>Go to <a href="https://github.com/settings/tokens?type=beta" target="_blank" rel="noopener noreferrer" className="text-[#c2703e] underline hover:text-[#d4956a]">github.com/settings/tokens</a> → Generate new token (Classic)</span>
+                                </li>
+                                <li className="flex gap-3 items-center">
+                                  <span className="bg-[#c2703e]/20 text-[#c2703e] font-bold w-5 h-5 rounded flex items-center justify-center flex-shrink-0 text-[10px]">2</span>
+                                  <span>Name it, set expiration, and check <code className="bg-[#141210]/60 px-1 rounded text-[#c2703e]">read:user</code> and <code className="bg-[#141210]/60 px-1 rounded text-[#c2703e]">repo</code> scopes</span>
+                                </li>
+                                <li className="flex gap-3 items-center">
+                                  <span className="bg-[#c2703e]/20 text-[#c2703e] font-bold w-5 h-5 rounded flex items-center justify-center flex-shrink-0 text-[10px]">3</span>
+                                  <span>Generate and copy the token</span>
+                                </li>
+                                <li className="flex gap-3 items-center">
+                                  <span className="bg-[#c2703e]/20 text-[#c2703e] font-bold w-5 h-5 rounded flex items-center justify-center flex-shrink-0 text-[10px]">4</span>
+                                  <span>In your profile repo, go to <strong>Settings</strong> → <strong>Secrets and variables</strong> → <strong>Actions</strong></span>
+                                </li>
+                                <li className="flex gap-3 items-center">
+                                  <span className="bg-[#c2703e]/20 text-[#c2703e] font-bold w-5 h-5 rounded flex items-center justify-center flex-shrink-0 text-[10px]">5</span>
+                                  <span>Add a <strong>New repository secret</strong> named <code className="bg-[#141210]/60 px-1 rounded text-[#c2703e]">GH_PAT</code> and paste the token</span>
+                                </li>
+                              </ol>
+                            </div>
                           </div>
                         </motion.div>
                       )}
@@ -524,37 +554,6 @@ export default function Home() {
                 </motion.div>
               </div>
 
-              {/* Setup Required Block */}
-              <div className="mt-8 bg-[#c2703e]/[0.08] border border-[#c2703e]/20 rounded-xl p-5 shadow-inner max-w-2xl mx-auto">
-                <h4 className="text-[#c2703e] font-bold text-sm flex items-center gap-2 mb-3 tracking-wide uppercase">
-                  <Key className="w-4 h-4" /> Setup Required After Download
-                </h4>
-                <p className="text-sm text-[#d4956a]/80 mb-4 leading-relaxed">
-                  To avoid API rate limits and include private commits, you must add a <code className="bg-[#141210]/60 px-1 py-0.5 rounded text-[#c2703e] font-mono">GH_PAT</code> secret with <code className="bg-[#141210]/60 px-1 py-0.5 rounded text-[#c2703e] font-mono">read:user</code> and <code className="bg-[#141210]/60 px-1 py-0.5 rounded text-[#c2703e] font-mono">repo</code> scopes to your repository's <strong>Actions Secrets</strong>.
-                </p>
-                <ol className="text-sm text-[#e8dcc8]/60 space-y-3 list-none">
-                  <li className="flex gap-3 items-center">
-                    <span className="bg-[#c2703e]/20 text-[#c2703e] font-bold w-5 h-5 rounded flex items-center justify-center flex-shrink-0 text-[10px]">1</span>
-                    <span>Go to <a href="https://github.com/settings/tokens?type=beta" target="_blank" rel="noopener noreferrer" className="text-[#c2703e] underline hover:text-[#d4956a]">github.com/settings/tokens</a> → Generate new token (Classic)</span>
-                  </li>
-                  <li className="flex gap-3 items-center">
-                    <span className="bg-[#c2703e]/20 text-[#c2703e] font-bold w-5 h-5 rounded flex items-center justify-center flex-shrink-0 text-[10px]">2</span>
-                    <span>Name it, set expiration, and check <code className="bg-[#141210]/60 px-1 rounded text-[#c2703e]">read:user</code> and <code className="bg-[#141210]/60 px-1 rounded text-[#c2703e]">repo</code> scopes</span>
-                  </li>
-                  <li className="flex gap-3 items-center">
-                    <span className="bg-[#c2703e]/20 text-[#c2703e] font-bold w-5 h-5 rounded flex items-center justify-center flex-shrink-0 text-[10px]">3</span>
-                    <span>Generate and copy the token</span>
-                  </li>
-                  <li className="flex gap-3 items-center">
-                    <span className="bg-[#c2703e]/20 text-[#c2703e] font-bold w-5 h-5 rounded flex items-center justify-center flex-shrink-0 text-[10px]">4</span>
-                    <span>In your profile repo, go to <strong>Settings</strong> → <strong>Secrets and variables</strong> → <strong>Actions</strong></span>
-                  </li>
-                  <li className="flex gap-3 items-center">
-                    <span className="bg-[#c2703e]/20 text-[#c2703e] font-bold w-5 h-5 rounded flex items-center justify-center flex-shrink-0 text-[10px]">5</span>
-                    <span>Add a <strong>New repository secret</strong> named <code className="bg-[#141210]/60 px-1 rounded text-[#c2703e]">GH_PAT</code> and paste the token</span>
-                  </li>
-                </ol>
-              </div>
 
               {/* Render Preview CTA */}
               <motion.div 

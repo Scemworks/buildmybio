@@ -43,7 +43,7 @@ Once you have customized your profile and downloaded the `github-profile-stats.z
 
 ### Step 1: Create a Special Repository
 
-Create a new repository with a name that **exactly matches your GitHub username**. GitHub will recognize this as your special profile repository. Make sure to set it to **Public** and check **Add a README file**.
+Create a new repository with a name that **exactly matches your GitHub username**. GitHub will recognize this as your special profile repository. Make sure to set it to **Public** and do NOT check **Add a README file** (since the ZIP already contains one!).
 
 <div align="center">
   <table width="100%">
@@ -58,12 +58,12 @@ Create a new repository with a name that **exactly matches your GitHub username*
         <span style="color: #57606a;">Owner</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: #57606a;">Repository name</span><br/>
         <code style="font-size: 16px;">your-username</code> / <code style="font-size: 16px;"><b>your-username</b></code> ✅<br/><br/>
         <div style="background-color: #ddf4ff; color: #0969da; padding: 12px; border: 1px solid #54aeff; border-radius: 6px;">
-          🐱 <b>You found a secret!</b> <code>your-username/your-username</code> is a ✨special✨ repository that you can use to add a <code>README.md</code> to your GitHub profile. Make sure it's public and initialize it with a README to get started.
+          🐱 <b>You found a secret!</b> <code>your-username/your-username</code> is a ✨special✨ repository that you can use to add a <code>README.md</code> to your GitHub profile. Make sure it's public to get started.
         </div>
         <br/>
         🔘 <b>Public</b><br/>
         <small style="color: #57606a;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Anyone on the internet can see this repository.</small><br/><br/>
-        ☑️ <b>Add a README file</b><br/>
+        ⬜ <b>Add a README file</b><br/>
         <small style="color: #57606a;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is where you can write a long description for your project.</small><br/><br/>
         <img src="https://img.shields.io/badge/Create_repository-2da44e?style=for-the-badge&logo=github&logoColor=white" alt="Create Repository" />
       </td>

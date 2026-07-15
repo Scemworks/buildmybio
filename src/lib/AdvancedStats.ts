@@ -25,11 +25,14 @@ export function generateAdvancedStatsSVG(username: string, name: string, advance
   const total_private_commits = advancedData.totalPrivateCommits || 0;
   const total_public_commits = total_commits - total_private_commits;
   
-  const commitRows = `
+  const commitRows = includePrivate ? `
     <text x="30" y="130"><tspan class="label">Public Commits</tspan><tspan class="colon">        : </tspan><tspan class="value">${total_public_commits}</tspan></text>
     <text x="30" y="155"><tspan class="label">Private Commits</tspan><tspan class="colon">       : </tspan><tspan class="value">${total_private_commits}</tspan></text>
     <text x="30" y="180"><tspan class="label">Total PRs</tspan><tspan class="colon">             : </tspan><tspan class="value">${total_prs}</tspan></text>
-    <text x="30" y="205"><tspan class="label">Contributed to (last year): </tspan><tspan class="value">${contributions_last_year}</tspan></text>`;
+    <text x="30" y="205"><tspan class="label">Contributed to (last year): </tspan><tspan class="value">${contributions_last_year}</tspan></text>` : `
+    <text x="30" y="130"><tspan class="label">Total Commits</tspan><tspan class="colon">         : </tspan><tspan class="value">${total_commits}</tspan></text>
+    <text x="30" y="155"><tspan class="label">Total PRs</tspan><tspan class="colon">             : </tspan><tspan class="value">${total_prs}</tspan></text>
+    <text x="30" y="180"><tspan class="label">Contributed to (last year): </tspan><tspan class="value">${contributions_last_year}</tspan></text>`;
 
   const rankY = 135;
 

@@ -383,47 +383,52 @@ export async function fetchAdvancedGitHubData(username: string, token: string): 
   }
 
   allDays.sort((a, b) => a.date.localeCompare(b.date));
-  const todayStr = new Date().toISOString().split('T')[0];
-  allDays = allDays.filter(d => d.date <= todayStr);
+  const todayDate = new Date();
+  const todayStr = todayDate.toISOString().split('T')[0];
+  const tomorrowDate = new Date(todayDate);
+  tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+  const tomorrowStr = tomorrowDate.toISOString().split('T')[0];
+
+  allDays = allDays.filter(d => d.date <= todayStr || (d.date === tomorrowStr && d.count > 0));
+
+  const firstDate = allDays.length > 0 ? allDays[0].date : todayStr;
+  const lastDate = allDays.length > 0 ? allDays[allDays.length - 1].date : todayStr;
 
   let currentStreak = 0, longestStreak = 0;
-  let currentStart = "", currentEnd = "";
-  let longestStart = "", longestEnd = "";
-  let tempStreak = 0, tempStart = "";
+  let currentStart = firstDate, currentEnd = firstDate;
+  let longestStart = firstDate, longestEnd = firstDate;
   let totalContributions = 0;
 
   allDays.forEach(day => {
     totalContributions += day.count;
+    
     if (day.count > 0) {
-      if (tempStreak === 0) tempStart = day.date;
-      tempStreak++;
-      if (tempStreak > longestStreak) {
-        longestStreak = tempStreak;
-        longestStart = tempStart;
-        longestEnd = day.date;
+      currentStreak++;
+      currentEnd = day.date;
+      if (currentStreak === 1) {
+        currentStart = day.date;
       }
-    } else {
-      tempStreak = 0;
+      
+      if (currentStreak >= longestStreak) {
+        longestStreak = currentStreak;
+        longestStart = currentStart;
+        longestEnd = currentEnd;
+      }
+    } else if (day.date !== lastDate) {
+      currentStreak = 0;
+      currentStart = lastDate;
+      currentEnd = lastDate;
     }
   });
-
-  let idx = allDays.length - 1;
-  if (idx >= 0) {
-    if (allDays[idx].count === 0) idx--;
-    if (idx >= 0 && allDays[idx].count > 0) {
-      currentEnd = allDays[idx].date;
-      while (idx >= 0 && allDays[idx].count > 0) {
-        currentStreak++;
-        currentStart = allDays[idx].date;
-        idx--;
-      }
-    }
-  }
 
   const formatDate = (dStr: string) => {
     if (!dStr) return "None";
     const d = new Date(dStr);
-    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    if (d.getFullYear() === currentYear) {
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    } else {
+      return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    }
   };
 
   return {

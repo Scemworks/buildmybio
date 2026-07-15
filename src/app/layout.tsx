@@ -16,8 +16,10 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://buildmybio.vercel.app"),
   title: "BuildMyBio - GitHub Profile Generator",
   description: "Generate an animated, self-updating terminal SVG and advanced stats for your GitHub Profile README. Create a beautiful, bespoke developer portfolio in seconds.",
+  applicationName: "BuildMyBio",
   keywords: ["GitHub", "README", "Profile", "Generator", "Neofetch", "SVG", "Stats", "Developer", "Portfolio"],
-  authors: [{ name: "Scemworks" }],
+  authors: [{ name: "Scemworks", url: "https://buildmybio.vercel.app" }],
+  creator: "Scemworks",
   openGraph: {
     title: "BuildMyBio - Animated GitHub Profile Generator",
     description: "Generate an animated, self-updating terminal SVG and advanced stats for your GitHub Profile README.",
@@ -28,6 +30,7 @@ export const metadata: Metadata = {
         url: "/og-image.png", // Will need an actual OG image, but fallback is fine
         width: 1200,
         height: 630,
+        alt: "BuildMyBio - Animated GitHub Profile Generator",
       }
     ],
     locale: "en_US",
@@ -51,6 +54,20 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "BuildMyBio",
+              alternateName: "BuildMyBio - GitHub Profile Generator",
+              url: "https://buildmybio.vercel.app",
+            }),
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

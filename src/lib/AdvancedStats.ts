@@ -5,7 +5,7 @@ export function generateAdvancedStatsSVG(username: string, name: string, advance
   const svg_width = 800;
   const gap = 30;
   const includePrivate = custom.includePrivateCommits || false;
-  const block1_height = includePrivate ? 240 : 215;
+  const block1_height = 240;
   const block2_height = 190;
 
   const langs = advancedData.topLangs;
@@ -22,26 +22,16 @@ export function generateAdvancedStatsSVG(username: string, name: string, advance
   const total_issues = advancedData.totalIssues;
   const contributions_last_year = advancedData.contributionsLastYear;
 
-  // Build commit rows based on checkbox state
-  let commitRows = '';
-  if (includePrivate) {
-    const total_private_commits = advancedData.totalPrivateCommits || 0;
-    const total_public_commits = total_commits - total_private_commits;
-    const privateStr = total_private_commits > 0 ? total_private_commits : '<tspan fill="#8b949e" font-style="italic">visible after setup</tspan>';
-    
-    commitRows = `
+  const total_private_commits = advancedData.totalPrivateCommits || 0;
+  const total_public_commits = total_commits - total_private_commits;
+  
+  const commitRows = `
     <text x="30" y="130"><tspan class="label">Public Commits</tspan><tspan class="colon">        : </tspan><tspan class="value">${total_public_commits}</tspan></text>
-    <text x="30" y="155"><tspan class="label">Private Commits</tspan><tspan class="colon">       : </tspan><tspan class="value">${privateStr}</tspan></text>
+    <text x="30" y="155"><tspan class="label">Private Commits</tspan><tspan class="colon">       : </tspan><tspan class="value">${total_private_commits}</tspan></text>
     <text x="30" y="180"><tspan class="label">Total PRs</tspan><tspan class="colon">             : </tspan><tspan class="value">${total_prs}</tspan></text>
     <text x="30" y="205"><tspan class="label">Contributed to (last year): </tspan><tspan class="value">${contributions_last_year}</tspan></text>`;
-  } else {
-    commitRows = `
-    <text x="30" y="130"><tspan class="label">Total Commits</tspan><tspan class="colon">         : </tspan><tspan class="value">${total_commits}</tspan></text>
-    <text x="30" y="155"><tspan class="label">Total PRs</tspan><tspan class="colon">             : </tspan><tspan class="value">${total_prs}</tspan></text>
-    <text x="30" y="180"><tspan class="label">Contributed to (last year): </tspan><tspan class="value">${contributions_last_year}</tspan></text>`;
-  }
 
-  const rankY = includePrivate ? 135 : 115;
+  const rankY = 135;
 
   // Language bars
   let lang_bars = "";

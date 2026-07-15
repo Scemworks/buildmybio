@@ -347,7 +347,7 @@ jobs:
         run: |
           python update_stats.py${includeAdvancedStats ? '\n          python update_advanced_stats.py' : ''}
         env:
-          GH_PAT: ${{ secrets.GH_PAT }}
+          GH_PAT: \${{ secrets.GH_PAT }}
 
       - name: Commit and push changes
         run: |

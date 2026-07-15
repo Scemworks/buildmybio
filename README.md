@@ -131,14 +131,68 @@ And you're done! Your GitHub profile is now beautifully updated.
 
 *(Note: The GitHub Action will automatically run at midnight UTC every day to refresh your SVG stats, or you can trigger it manually in the Actions tab!)*
 
-## 🔐 Advanced Stats Setup (Optional)
+### Step 4: Add GitHub Personal Access Token (Required)
 
-If you enable the **Generate Advanced Stats SVG** and want to include **Private Commits**, you'll need to set up a GitHub PAT (Personal Access Token) inside your profile repository's GitHub Actions.
+To ensure the automated daily script can fetch your GitHub data without hitting API rate limits (and to include Private Commits if you enabled Advanced Stats), you must add a GitHub Personal Access Token (PAT) to your repository secrets.
 
-1. Go to [github.com/settings/tokens](https://github.com/settings/tokens?type=beta) and generate a new token (Classic).
-2. Check the `read:user` and `repo` scopes.
+1. Go to [github.com/settings/tokens](https://github.com/settings/tokens) and generate a new token (Classic).
+2. Give it a note (e.g., `BuildMyBio Stats Token`) and check the `read:user` and `repo` scopes.
+
+<div align="center">
+  <table width="100%">
+    <tr>
+      <td bgcolor="#f6f8fa" style="padding: 16px; border-bottom: 1px solid #d0d7de;">
+        <h3 style="margin: 0; font-family: sans-serif;">New personal access token (classic)</h3>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 16px; border: 1px solid #d0d7de; font-family: sans-serif; background-color: #ffffff;">
+        <span style="font-weight: bold; font-size: 14px;">Note</span><br/>
+        <div style="border: 1px solid #d0d7de; border-radius: 6px; padding: 6px; background-color: #f6f8fa; width: 300px; margin-top: 4px;">
+          <code>BuildMyBio Stats Token</code>
+        </div>
+        <br/>
+        <span style="font-weight: bold; font-size: 14px;">Select scopes</span>
+        <div style="border: 1px solid #d0d7de; border-radius: 6px; padding: 12px; margin-top: 8px;">
+          ☑️ <b>repo</b> <br/><small style="color: #57606a;">Full control of private repositories</small><br/><br/>
+          ☑️ <b>read:user</b> <br/><small style="color: #57606a;">Read all user profile data</small>
+        </div>
+        <br/>
+        <img src="https://img.shields.io/badge/Generate_token-2da44e?style=for-the-badge" alt="Generate token" />
+      </td>
+    </tr>
+  </table>
+</div>
+<br/>
+
 3. In your GitHub profile repository (e.g., `yourusername/yourusername`), go to **Settings** → **Secrets and variables** → **Actions**.
-4. Add a **New repository secret** named `GH_PAT` and paste your token.
+4. Click **New repository secret**. Name it `GH_PAT` and paste your copied token into the Secret field, then click **Add secret**.
+
+<div align="center">
+  <table width="100%">
+    <tr>
+      <td bgcolor="#f6f8fa" style="padding: 16px; border-bottom: 1px solid #d0d7de;">
+        <h3 style="margin: 0; font-family: sans-serif;">New secret</h3>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 16px; border: 1px solid #d0d7de; font-family: sans-serif; background-color: #ffffff;">
+        <span style="font-weight: bold; font-size: 14px;">Name</span><br/>
+        <div style="border: 1px solid #d0d7de; border-radius: 6px; padding: 6px; background-color: #f6f8fa; width: 300px; margin-top: 4px;">
+          <code>GH_PAT</code>
+        </div>
+        <br/>
+        <span style="font-weight: bold; font-size: 14px;">Secret</span><br/>
+        <div style="border: 1px solid #d0d7de; border-radius: 6px; padding: 8px; height: 60px; color: #57606a; background-color: #f6f8fa; margin-top: 4px;">
+          <small>ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxx...</small>
+        </div>
+        <br/>
+        <img src="https://img.shields.io/badge/Add_secret-2da44e?style=for-the-badge" alt="Add secret" />
+      </td>
+    </tr>
+  </table>
+</div>
+<br/>
 
 ## 🤝 Contributing
 

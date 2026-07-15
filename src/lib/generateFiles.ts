@@ -236,12 +236,18 @@ export function generateUpdateScript(username: string): string {
   return `import re
 import urllib.request
 import json
+import os
 
 USERNAME = "${username}"
+token = os.environ.get("GH_PAT")
+
+headers = {'User-Agent': 'Mozilla/5.0'}
+if token:
+    headers['Authorization'] = f"Bearer {token}"
 
 # 1. Fetch user data from GitHub API
 url = f"https://api.github.com/users/{USERNAME}"
-req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+req = urllib.request.Request(url, headers=headers)
 try:
     with urllib.request.urlopen(req) as response:
         data = json.loads(response.read().decode())
@@ -256,7 +262,7 @@ except Exception as e:
 stars = 0
 try:
     repos_url = f"https://api.github.com/users/{USERNAME}/repos?per_page=100"
-    req_repos = urllib.request.Request(repos_url, headers={'User-Agent': 'Mozilla/5.0'})
+    req_repos = urllib.request.Request(repos_url, headers=headers)
     with urllib.request.urlopen(req_repos) as response:
         repos_data = json.loads(response.read().decode())
         for repo in repos_data:
@@ -339,7 +345,9 @@ jobs:
 
       - name: Run update script
         run: |
-          python update_stats.py${includeAdvancedStats ? '\n          python update_advanced_stats.py' : ''}${includeAdvancedStats ? '\n        env:\n          GH_PAT: ${{ secrets.GH_PAT }}' : ''}
+          python update_stats.py${includeAdvancedStats ? '\n          python update_advanced_stats.py' : ''}
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
 
       - name: Commit and push changes
         run: |

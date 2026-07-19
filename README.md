@@ -1,6 +1,6 @@
 # 🎨 BuildMyBio
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-buildmybio.vercel.app-c2703e?style=for-the-badge)](https://buildmybio.vercel.app)
+[![Live Demo](https://badgen.net/badge/Live%20Demo/buildmybio.vercel.app/c2703e)](https://buildmybio.vercel.app)
 
 BuildMyBio is a modern Next.js application that generates an animated, self-updating terminal SVG (Neofetch-style) for your GitHub Profile README. Try it live at [buildmybio.vercel.app](https://buildmybio.vercel.app) or host it yourself! It infers your developer persona, extracts top projects, and crafts beautifully animated statistics—all without needing a database.
 
@@ -122,7 +122,7 @@ Once the files are uploaded, scroll down to the **Commit changes** box. GitHub w
         </div>
         <br/>
         🔘 <b>Commit directly to the <code style="background-color: #ddf4ff; color: #0969da; padding: 2px 6px; border-radius: 4px;">main</code> branch.</b><br/><br/>
-        <img src="https://img.shields.io/badge/Commit_changes-2da44e?style=for-the-badge" alt="Commit changes" />
+        <img src="https://badgen.net/badge/-/Commit%20changes/2da44e" alt="Commit changes" />
       </td>
     </tr>
   </table>
@@ -160,7 +160,7 @@ To ensure the automated daily script can fetch your GitHub data without hitting 
           ☑️ <b>read:user</b> <br/><small style="color: #57606a;">Read all user profile data</small>
         </div>
         <br/>
-        <img src="https://img.shields.io/badge/Generate_token-2da44e?style=for-the-badge" alt="Generate token" />
+        <img src="https://badgen.net/badge/-/Generate%20token/2da44e" alt="Generate token" />
       </td>
     </tr>
   </table>
@@ -189,7 +189,7 @@ To ensure the automated daily script can fetch your GitHub data without hitting 
           <small>ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxx...</small>
         </div>
         <br/>
-        <img src="https://img.shields.io/badge/Add_secret-2da44e?style=for-the-badge" alt="Add secret" />
+        <img src="https://badgen.net/badge/-/Add%20secret/2da44e" alt="Add secret" />
       </td>
     </tr>
   </table>

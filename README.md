@@ -65,7 +65,9 @@ Create a new repository with a name that **exactly matches your GitHub username*
         <small style="color: #57606a;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Anyone on the internet can see this repository.</small><br/><br/>
         ⬜ <b>Add a README file</b><br/>
         <small style="color: #57606a;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is where you can write a long description for your project.</small><br/><br/>
-        <img src="https://img.shields.io/badge/Create_repository-2da44e?style=for-the-badge&logo=github&logoColor=white" alt="Create Repository" />
+        <a href="https://github.com/new" target="_blank">
+          <img src="https://badgen.net/badge/icon/Create%20repository?icon=github&label&color=2da44e" alt="Create Repository button" />
+        </a>
       </td>
     </tr>
   </table>
